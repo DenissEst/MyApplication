@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Books</string>
+    <string name="name_label">Nome</string>
+    <string name="female">Donna</string>
+    <string name="male">Uomo</string>
+    <string name="conf_pass_label">Conferma password</string>
+    <string name="reg_button">Registrati</string>
+    <string name="redirect_label">Sei già registrato? Clicca qui.</string>
+</resources>

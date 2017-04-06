@@ -1,3 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Books</string>
+    <string name="name_label">Name</string>
+    <string name="female">Female</string>
+    <string name="male">Male</string>
+    <string name="conf_pass_label">Confirm password</string>
+    <string name="reg_button">Register</string>
+    <string name="redirect_label">Already registered? Click here.</string>
 </resources>
