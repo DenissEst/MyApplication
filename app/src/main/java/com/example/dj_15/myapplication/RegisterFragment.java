@@ -14,6 +14,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.net.URL;
+import java.net.URLEncoder;
+
 /**
  * Created by Carlotta on 23/03/2017.
  */
@@ -22,8 +25,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
     private EditText name;
     private RadioGroup gender;
-    private RadioButton fem;
-    private RadioButton mas;
+    private RadioButton selectedGender;
     private EditText username;
     private EditText password;
     private EditText confPass;
@@ -40,8 +42,6 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
         name = (EditText) view.findViewById(R.id.nome);
         gender = (RadioGroup) view.findViewById(R.id.radio_group);
-        fem = (RadioButton) view.findViewById(R.id.fem);
-        mas = (RadioButton) view.findViewById(R.id.mas);
         username = (EditText) view.findViewById(R.id.username);
         password = (EditText) view.findViewById(R.id.password);
         confPass = (EditText) view.findViewById(R.id.conf_pass);
@@ -49,16 +49,6 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
         register = (Button) view.findViewById(R.id.register);
 
         name.setOnEditorActionListener(this);
-        gender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup gender, @IdRes int i) {
-                if(i == R.id.fem){
-
-                }else{
-
-                }
-            }
-        });
         username.setOnEditorActionListener(this);
         password.setOnEditorActionListener(this);
         confPass.setOnEditorActionListener(this);
@@ -75,6 +65,22 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 getFragmentManager().beginTransaction().replace(R.id.frag_container, new LoginFragment()).commit();
                 break;
             case(R.id.register):
+                int select = gender.getCheckedRadioButtonId();
+                selectedGender = (RadioButton) view.findViewById(select);
+                String data_name = name.getText().toString();
+                String data_gender = selectedGender.getText().toString();
+                String data_user = username.getText().toString();
+                String data_pass = password.getText().toString();
+                String data_conf = confPass.getText().toString();
+
+                try{
+                  //  URL pagina = new URL("");
+                    String POST = URLEncoder.encode("nome", "UTF-8") + "=" + URLEncoder.encode(data_name, "UTF-8") + "&" + URLEncoder.encode("sesso", "UTF-8") + "=" + URLEncoder.encode(data_gender, "UTF-8") + "&" + URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(data_user, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(data_pass, "UTF-8") + "&" + URLEncoder.encode("confpass", "UTF-8") + "=" + URLEncoder.encode(data_conf, "UTF-8");
+
+                }catch(Exception e){
+
+                }
+
                 break;
         }
     }
