@@ -1,6 +1,7 @@
 package com.example.dj_15.myapplication;
 
 import android.app.Fragment;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.IdRes;

@@ -1,6 +1,7 @@
 package com.example.dj_15.myapplication;
 
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -19,4 +20,5 @@ public class MainActivity extends AppCompatActivity{
         trans.add(R.id.frag_container, new RegisterFragment()).commit();
     }
 
+    //TODO onPause e onResume per risolvere il problema della onCreate
 }
