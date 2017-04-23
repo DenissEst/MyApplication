@@ -59,7 +59,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     public void onClick(View view) {
         switch(view.getId()){
             case(R.id.redirect):
-                getFragmentManager().beginTransaction().replace(R.id.frag_container, new LoginFragment()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.frag_container, new LoginFragment(), "login").commit();
                 break;
             case(R.id.register):
                 int select = gender.getCheckedRadioButtonId();
@@ -80,6 +80,12 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 */
                 break;
         }
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        getFragmentManager().putFragment(savedInstanceState, "REGISTER", this);
     }
 
     @Override

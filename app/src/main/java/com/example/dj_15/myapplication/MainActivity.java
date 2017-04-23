@@ -24,17 +24,20 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         if(savedInstanceState != null) {
-            //TODO Risolvere il problema del LoginFragment con savedInstanceState (vedere come esplorare quest'oggetto.
-        }
-        if(lastFragment != "Login"){
-            RegisterFragment register = (RegisterFragment) getFragmentManager().findFragmentById(R.id.frag_container);
+            LoginFragment login = (LoginFragment) getFragmentManager().findFragmentById(R.id.login_fragment);
 
-            if (register == null) {
+            if(login != null){
                 android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
-                trans.add(R.id.frag_container, new RegisterFragment()).commit();
+                trans.add(R.id.frag_container, login).commit();
+            }else{
+                RegisterFragment reg = (RegisterFragment) getFragmentManager().findFragmentById(R.id.register_fragment);
+                if(reg != null){
+                    android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
+                    trans.add(R.id.frag_container, reg).commit();
+                }
             }
-        }
-    }
+        }else{
+            RegisterFragment register = (RegisterFragment) getFragmentManager().findFragmentById(R.id.frag_container);
 
     @Override
     protected void onResume() {
