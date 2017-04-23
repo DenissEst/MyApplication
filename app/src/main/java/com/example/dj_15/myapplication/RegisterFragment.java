@@ -1,10 +1,7 @@
 package com.example.dj_15.myapplication;
 
 import android.app.Fragment;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.IdRes;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +12,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import java.net.URL;
 import java.net.URLEncoder;
 
 /**
@@ -43,8 +39,8 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
         name = (EditText) view.findViewById(R.id.nome);
         gender = (RadioGroup) view.findViewById(R.id.radio_group);
-        username = (EditText) view.findViewById(R.id.username);
-        password = (EditText) view.findViewById(R.id.password);
+        username = (EditText) view.findViewById(R.id.username2);
+        password = (EditText) view.findViewById(R.id.password2);
         confPass = (EditText) view.findViewById(R.id.conf_pass);
         redirect = (TextView) view.findViewById(R.id.redirect);
         register = (Button) view.findViewById(R.id.register);
@@ -63,7 +59,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     public void onClick(View view) {
         switch(view.getId()){
             case(R.id.redirect):
-                getFragmentManager().beginTransaction().replace(R.id.frag_container, new LoginFragment()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.frag_container, new LoginFragment(), "login").commit();
                 break;
             case(R.id.register):
                 int select = gender.getCheckedRadioButtonId();
@@ -74,16 +70,22 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 String data_pass = password.getText().toString();
                 String data_conf = confPass.getText().toString();
 
-                try{
+           /*     try{
                   //  URL pagina = new URL("");
                     String POST = URLEncoder.encode("nome", "UTF-8") + "=" + URLEncoder.encode(data_name, "UTF-8") + "&" + URLEncoder.encode("sesso", "UTF-8") + "=" + URLEncoder.encode(data_gender, "UTF-8") + "&" + URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(data_user, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(data_pass, "UTF-8") + "&" + URLEncoder.encode("confpass", "UTF-8") + "=" + URLEncoder.encode(data_conf, "UTF-8");
 
                 }catch(Exception e){
 
                 }
-
+*/
                 break;
         }
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        getFragmentManager().putFragment(savedInstanceState, "REGISTER", this);
     }
 
     @Override
