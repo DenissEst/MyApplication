@@ -51,6 +51,15 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        //TODO controlla se è giusto. Dubbio: savedInstanceState è "globale" in tutti i file?
+
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putString("lastFrag", "login");
+    }
+
+    @Override
     public void onClick(View v) {
         String[] check = new String[2];
         check[0] = usernameEditText.getText().toString();
