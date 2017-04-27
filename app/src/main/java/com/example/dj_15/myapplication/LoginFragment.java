@@ -54,13 +54,6 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        getFragmentManager().putFragment(outState, "LOGIN", this);
-    }
-
-    @Override
     public void onClick(View v) {
         switch(v.getId()){
             case(R.id.login_redirect):
