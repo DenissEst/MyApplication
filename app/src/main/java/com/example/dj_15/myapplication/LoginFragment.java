@@ -28,6 +28,7 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
+    private TextView redirect;
 
 
     public void onCreate(Bundle savedInstanceState){
@@ -42,29 +43,38 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
         usernameEditText = (EditText) view.findViewById(R.id.username);
         passwordEditText = (EditText) view.findViewById(R.id.password);
         loginButton = (Button) view.findViewById(R.id.login);
+        redirect = (TextView) view.findViewById(R.id.login_redirect);
 
         usernameEditText.setOnEditorActionListener(this);
         passwordEditText.setOnEditorActionListener(this);
         loginButton.setOnClickListener(this);
+        redirect.setOnClickListener(this);
 
         return view;
     }
 
     @Override
     public void onClick(View v) {
-        String[] check = new String[2];
-        check[0] = usernameEditText.getText().toString();
-        check[1] = passwordEditText.getText().toString();
- /*       if(check[0] == null){
-            Toast.makeText(getContext(), "Non hai inserito il tuo username!", Toast.LENGTH_SHORT).show();
+        switch(v.getId()){
+            case(R.id.login_redirect):
+                getFragmentManager().beginTransaction().replace(R.id.frag_container, new RegisterFragment(), "register").commit();
+                break;
+            case(R.id.login):
+                String[] check = new String[2];
+                check[0] = usernameEditText.getText().toString();
+                check[1] = passwordEditText.getText().toString();
+                 /*       if(check[0] == null){
+                            Toast.makeText(getContext(), "Non hai inserito il tuo username!", Toast.LENGTH_SHORT).show();
+                        }
+                        Intent openprint = new Intent(getActivity(), PrintActivity.class);
+                        openprint.putExtra("username", "check[0]");
+                        openprint.putExtra("password", "check[1]");
+
+                        startActivity(openprint);
+
+                */
+                break;
         }
-        Intent openprint = new Intent(getActivity(), PrintActivity.class);
-        openprint.putExtra("username", "check[0]");
-        openprint.putExtra("password", "check[1]");
-
-        startActivity(openprint);
-
-*/
     }
 
     @Override
