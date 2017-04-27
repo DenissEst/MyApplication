@@ -59,6 +59,21 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
             case(R.id.login_redirect):
                 getFragmentManager().beginTransaction().replace(R.id.frag_container, new RegisterFragment(), "register").commit();
                 break;
+            case(R.id.login):
+                String[] check = new String[2];
+                check[0] = usernameEditText.getText().toString();
+                check[1] = passwordEditText.getText().toString();
+                 /*       if(check[0] == null){
+                            Toast.makeText(getContext(), "Non hai inserito il tuo username!", Toast.LENGTH_SHORT).show();
+                        }
+                        Intent openprint = new Intent(getActivity(), PrintActivity.class);
+                        openprint.putExtra("username", "check[0]");
+                        openprint.putExtra("password", "check[1]");
+
+                        startActivity(openprint);
+
+                */
+                break;
         }
     }
 
