@@ -10,9 +10,17 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             RegisterFragment register = (RegisterFragment) getFragmentManager().findFragmentById(R.id.frag_container);
 
+            if(register == null){
+                android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
+                trans.add(R.id.frag_container, new RegisterFragment());
+                trans.commit();
+            }
+        }
+
+    }
     @Override
     protected void onResume() {
         super.onResume();
