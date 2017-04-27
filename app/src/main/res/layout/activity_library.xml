@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/library"
     android:layout_width="match_parent"
@@ -12,7 +13,9 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:backgroundTint="@color/colorPrimary"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_below="@+id/library_container"
+        tools:layout_editor_absoluteX="8dp">
 
         <Button
             android:layout_width="50dp"
@@ -20,6 +23,7 @@
             android:layout_gravity="right"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_marginEnd="5dp"
             android:layout_marginRight="5dp"/>
 
     </android.support.v7.widget.Toolbar>
@@ -27,7 +31,9 @@
     <FrameLayout
         android:id="@+id/library_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/toolbarLib"
+        android:layout_below="@+id/Buttons">
     </FrameLayout>
 
     <LinearLayout
@@ -36,7 +42,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_above="@+id/library_container"
+        >
 
         <Button
             android:layout_width="50dp"
