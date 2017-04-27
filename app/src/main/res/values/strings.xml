@@ -7,4 +7,5 @@
     <string name="conf_pass_label">Confirm password</string>
     <string name="reg_button">Register</string>
     <string name="redirect_label">Already registered? Click here.</string>
+    <string name="login_redirect_label">Not registered yet? Click here.</string>
 </resources>
