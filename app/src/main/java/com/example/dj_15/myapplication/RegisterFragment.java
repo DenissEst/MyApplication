@@ -69,15 +69,6 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 String data_user = username.getText().toString();
                 String data_pass = password.getText().toString();
                 String data_conf = confPass.getText().toString();
-
-           /*     try{
-                  //  URL pagina = new URL("");
-                    String POST = URLEncoder.encode("nome", "UTF-8") + "=" + URLEncoder.encode(data_name, "UTF-8") + "&" + URLEncoder.encode("sesso", "UTF-8") + "=" + URLEncoder.encode(data_gender, "UTF-8") + "&" + URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(data_user, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(data_pass, "UTF-8") + "&" + URLEncoder.encode("confpass", "UTF-8") + "=" + URLEncoder.encode(data_conf, "UTF-8");
-
-                }catch(Exception e){
-
-                }
-*/
                 break;
         }
     }
@@ -86,4 +77,9 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
         return false;
     }
+
+
+
+
 }
+
