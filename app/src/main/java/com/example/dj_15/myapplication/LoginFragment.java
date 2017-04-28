@@ -2,6 +2,7 @@ package com.example.dj_15.myapplication;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -16,6 +17,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+
 
 /**
  * Created by Monica on 21/03/2017.
@@ -23,7 +36,8 @@ import org.json.JSONObject;
 
 public class LoginFragment extends Fragment implements TextView.OnEditorActionListener, View.OnClickListener {
 
-
+    public static final int CONNECTION_TIMEOUT=10000;
+    public static final int READ_TIMEOUT=15000;
     private ImageView imageView;
     private EditText usernameEditText;
     private EditText passwordEditText;
@@ -63,6 +77,7 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
                 String[] check = new String[2];
                 check[0] = usernameEditText.getText().toString();
                 check[1] = passwordEditText.getText().toString();
+                new LoginThread().execute(check[0], check[1]);
                  /*       if(check[0] == null){
                             Toast.makeText(getContext(), "Non hai inserito il tuo username!", Toast.LENGTH_SHORT).show();
                         }
@@ -85,25 +100,102 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
         return false;
     }
 
-    class LoginThread extends AsyncTask<String, Void, String>{
+    class LoginThread extends AsyncTask<String, String, String>{
+        HttpURLConnection connection;
+        URL url=null;
+        String myUsername;
 
         @Override
-        protected String doInBackground(String[] check) {
+        protected String doInBackground(String...params) {
 
-            JSONObject jsonObject= new JSONObject();
-            try {
-                jsonObject.put("username", check[0]);
-                jsonObject.put("password", check[1]);
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
+            myUsername = params[0];
+
+            try{
+                url = new URL("http://charlytime92.altervista.org/control_login.php");
+            }catch(MalformedURLException e){
                 e.printStackTrace();
+                return "exception";
             }
 
-            //HttpClient httpClient = new DefaultHttpClient();
+            try{
+                connection =(HttpURLConnection)url.openConnection();
+                connection.setReadTimeout(READ_TIMEOUT);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+                connection.setRequestMethod("POST");
+
+                connection.setDoInput(true);
+                connection.setDoInput(true);
+
+                //append parameters to url
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("username", params[0]).appendQueryParameter("password", params[1]);
+                String query = builder.build().getEncodedQuery();
+                //apre la connessione
+                OutputStream os=connection.getOutputStream();
+                BufferedWriter write =new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
+
+                write.write(query);
+                write.flush();
+                os.close();
+                connection.connect();
+            } catch(IOException e1) {
+                e1.printStackTrace();
+                return "exception";
+            }
 
 
-            return null;
+            try{
+                int response= connection.getResponseCode();
+                if(response==HttpURLConnection.HTTP_OK){
+                    //leggo i dati e li mando sul server
+                    InputStream input =connection.getInputStream();
+                    BufferedReader reader =new BufferedReader(new InputStreamReader(input));
+
+                    StringBuilder result =new StringBuilder();
+                    String line;
+
+
+                    while( (line=reader.readLine()) !=null){
+                        result.append(line);
+                    }
+
+                    return (result.toString());
+                }else{
+                    return ("unsuccessful");
+                }
+            } catch (IOException e2) {
+                e2.printStackTrace();
+                return "exception";
+            }finally {
+                connection.disconnect();
+            }
         }
+
+        protected void onPostExecute(String result){
+            if(result.equalsIgnoreCase("ok")){
+                Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
+                intentApriAS.putExtra("myUsername", myUsername);
+                startActivity(intentApriAS);
+                getActivity().finish();
+            }else if(result.equalsIgnoreCase("error")){
+                Toast.makeText(getActivity(), "Invalid email or password", Toast.LENGTH_LONG).show();
+
+            }else if (result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")) {
+
+                Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
+
+            }else if (result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")) {
+
+                Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
+
+            }
+
+        }
+
+
+
+
+
+
     }
 
 
