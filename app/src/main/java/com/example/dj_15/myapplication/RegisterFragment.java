@@ -64,21 +64,16 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
             case(R.id.register):
                 int select = gender.getCheckedRadioButtonId();
                 selectedGender = (RadioButton) view.findViewById(select);
-                String data_name = name.getText().toString();
-                String data_gender = selectedGender.getText().toString();
-                String data_user = username.getText().toString();
-                String data_pass = password.getText().toString();
-                String data_conf = confPass.getText().toString();
 
-           /*     try{
-                  //  URL pagina = new URL("");
-                    String POST = URLEncoder.encode("nome", "UTF-8") + "=" + URLEncoder.encode(data_name, "UTF-8") + "&" + URLEncoder.encode("sesso", "UTF-8") + "=" + URLEncoder.encode(data_gender, "UTF-8") + "&" + URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(data_user, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(data_pass, "UTF-8") + "&" + URLEncoder.encode("confpass", "UTF-8") + "=" + URLEncoder.encode(data_conf, "UTF-8");
+                String[] params = new String[5];
 
-                }catch(Exception e){
+                params[0] = name.getText().toString();
+                params[1] = selectedGender.getText().toString();
+                params[2] = username.getText().toString();
+                params[3] = password.getText().toString();
+                params[4] = confPass.getText().toString();
 
-                }
-*/
-                break;
+
         }
     }
 

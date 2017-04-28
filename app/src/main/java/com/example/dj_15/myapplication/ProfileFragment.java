@@ -14,6 +14,7 @@ import android.widget.TextView;
 public class ProfileFragment extends Fragment {
 
     TextView username;
+    TextView name;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,7 @@ public class ProfileFragment extends Fragment {
         username = (TextView) view.findViewById(R.id.usernameprofile);
         username.setText(getActivity().getIntent().getExtras().getString("myUsername"));
 
+        name = (TextView) view.findViewById(R.id.nameprofile);
 
         return view;
     }
