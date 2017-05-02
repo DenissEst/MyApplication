@@ -1,7 +1,9 @@
 package com.example.dj_15.myapplication;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,11 +45,29 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
     private EditText passwordEditText;
     private Button loginButton;
     private TextView redirect;
-
+    private SharedPreferences savedData;
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        savedData = this.getActivity().getSharedPreferences("SavedValues", Context.MODE_PRIVATE);
+    }
+
+    @Override
+    public void onResume() {
+        usernameEditText.setText(savedData.getString("loginUser", ""));
+
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences.Editor edit = savedData.edit();
+        edit.putString("loginUser", usernameEditText.getText().toString());
+        edit.commit();
+
+        super.onPause();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -172,6 +192,10 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
 
         protected void onPostExecute(String result){
             if(result.equalsIgnoreCase("ok")){
+                SharedPreferences.Editor editor = savedData.edit();
+                editor.putString("user", myUsername);
+                editor.commit();
+
                 Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
                 intentApriAS.putExtra("myUsername", myUsername);
                 startActivity(intentApriAS);
@@ -188,19 +212,7 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
                 Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
 
             }
-
         }
-
-
-
-
-
-
     }
-
-
-
-
-
 }
 
