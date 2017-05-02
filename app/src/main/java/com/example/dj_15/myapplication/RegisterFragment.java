@@ -64,12 +64,16 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
             case(R.id.register):
                 int select = gender.getCheckedRadioButtonId();
                 selectedGender = (RadioButton) view.findViewById(select);
-                String data_name = name.getText().toString();
-                String data_gender = selectedGender.getText().toString();
-                String data_user = username.getText().toString();
-                String data_pass = password.getText().toString();
-                String data_conf = confPass.getText().toString();
-                break;
+
+                String[] params = new String[5];
+
+                params[0] = name.getText().toString();
+                params[1] = selectedGender.getText().toString();
+                params[2] = username.getText().toString();
+                params[3] = password.getText().toString();
+                params[4] = confPass.getText().toString();
+
+
         }
     }
 
@@ -77,9 +81,4 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
         return false;
     }
-
-
-
-
 }
-
