@@ -2,6 +2,7 @@ package com.example.dj_15.myapplication;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,7 @@ import java.net.URLEncoder;
  * Created by Carlotta on 23/03/2017.
  */
 
-public class RegisterFragment extends Fragment implements TextView.OnEditorActionListener, View.OnClickListener{
+public class RegisterFragment extends Fragment implements TextView.OnEditorActionListener, View.OnClickListener, RadioGroup.OnCheckedChangeListener{
 
     private EditText name;
     private RadioGroup gender;
@@ -28,6 +29,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     private EditText confPass;
     private Button register;
     private TextView redirect;
+    private String idGender;
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -51,6 +53,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
         confPass.setOnEditorActionListener(this);
         redirect.setOnClickListener(this);
         register.setOnClickListener(this);
+        gender.setOnCheckedChangeListener(this);
 
         return view;
     }
@@ -62,13 +65,10 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 getFragmentManager().beginTransaction().replace(R.id.frag_container, new LoginFragment()).commit();
                 break;
             case(R.id.register):
-                int select = gender.getCheckedRadioButtonId();
-                selectedGender = (RadioButton) view.findViewById(select);
-
                 String[] params = new String[5];
 
                 params[0] = name.getText().toString();
-                params[1] = selectedGender.getText().toString();
+                params[1] = idGender;
                 params[2] = username.getText().toString();
                 params[3] = password.getText().toString();
                 params[4] = confPass.getText().toString();
@@ -80,5 +80,13 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
         return false;
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        if(i == R.id.fem)
+            idGender = "Donna";
+        else
+            idGender = "Uomo";
     }
 }
