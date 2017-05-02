@@ -24,8 +24,6 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
 
-    TextView username;
-    TextView name;
     ExpandableListView expandableListView;
     ExpandableListAdapter expandableListAdapter;
     List<String> expandableListTitle;
