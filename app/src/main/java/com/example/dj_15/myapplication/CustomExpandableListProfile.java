@@ -69,6 +69,7 @@ public class CustomExpandableListProfile extends BaseExpandableListAdapter {
         if(convertView == null){
             LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.exlistview_group, null);
+            convertView.canScrollHorizontally(1);
         }
         TextView listTitleTextView= (TextView) convertView.findViewById(R.id.exlistviewTitle);
         listTitleTextView.setTypeface(null, Typeface.BOLD);
