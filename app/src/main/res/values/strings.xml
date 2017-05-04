@@ -9,4 +9,6 @@
     <string name="redirect_label">Already registered? Click here.</string>
     <string name="login_redirect_label">Not registered yet? Click here.</string>
     <string name="pref_label">Favorite books</string>
+    <string name="search_label">Title, author or ISBN</string>
+    <string name="settings_label">Settings</string>
 </resources>

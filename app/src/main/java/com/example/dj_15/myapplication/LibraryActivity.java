@@ -1,5 +1,6 @@
 package com.example.dj_15.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -64,8 +65,9 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.search:
-                android.app.FragmentTransaction search = getFragmentManager().beginTransaction();
-                search.replace(R.id.library_container, new SearchFragment()).commit();
+                Intent intentApriAS = new Intent(this, SearchActivity.class);
+                startActivity(intentApriAS);
+                this.finish();
                 break;
             case R.id.profile:
                 android.app.FragmentTransaction profile = getFragmentManager().beginTransaction();

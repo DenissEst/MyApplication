@@ -1,7 +1,9 @@
 package com.example.dj_15.myapplication;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -47,9 +49,13 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     private TextView redirect;
     private String idGender;
 
+    private SharedPreferences saved;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        saved = this.getActivity().getSharedPreferences("SavedValues", Context.MODE_PRIVATE);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -186,6 +192,10 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
         protected void onPostExecute(String result) {
             if (result.equalsIgnoreCase("ok")) {
+                SharedPreferences.Editor editor = saved.edit();
+                editor.putString("user", myUsername);
+                editor.commit();
+
                 Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
                 intentApriAS.putExtra("myUsername",myUsername);
                 startActivity(intentApriAS);
