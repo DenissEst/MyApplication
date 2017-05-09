@@ -138,7 +138,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 //append parameters to url
 
                 Uri.Builder builder = new Uri.Builder().appendQueryParameter("name", params[0])
-                        .appendQueryParameter("gender", params[1])
+                        .appendQueryParameter("sesso", params[1])
                         .appendQueryParameter("username", params[2])
                         .appendQueryParameter("password", params[3])
                         .appendQueryParameter("confPass", params[4]);
@@ -190,9 +190,11 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 intentApriAS.putExtra("myUsername",myUsername);
                 startActivity(intentApriAS);
                 getActivity().finish();
-            } else if (result.equalsIgnoreCase("error_query")) {
-                Toast.makeText(getActivity(), "non query", Toast.LENGTH_LONG).show();
+            } else if (result.equalsIgnoreCase("error1")) {
+                Toast.makeText(getActivity(), "Error in registro new user", Toast.LENGTH_LONG).show();
 
+            }else if (result.equalsIgnoreCase("error2")) {
+                    Toast.makeText(getActivity(), "Error registerNewUser ", Toast.LENGTH_LONG).show();
             }else if(result.equalsIgnoreCase("username utilizzato")){
                 Toast.makeText(getActivity(), "sei gia un utente registrato", Toast.LENGTH_LONG).show();
 
