@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity{
 
         savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
 
-
         String user = savedValues.getString("user", "");
         if(user != ""){
             Intent intentApriAS = new Intent(this, LibraryActivity.class);

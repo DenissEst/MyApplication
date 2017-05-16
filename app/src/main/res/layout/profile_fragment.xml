@@ -86,23 +86,13 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/prefer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/follow"
-                android:layout_marginTop="15dp"
-                android:text="@string/pref_label"
-                android:textAllCaps="true"
-                android:textSize="18dp"
-                android:textStyle="bold" />
-
             <ExpandableListView
                 android:id="@+id/exlistviewProfile"
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_below="@+id/prefer"
-                android:layout_centerInParent="true"
+                android:layout_height="200dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/follow"
                 android:layout_marginTop="5dp"
                 android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
                 android:divider="@android:color/darker_gray"

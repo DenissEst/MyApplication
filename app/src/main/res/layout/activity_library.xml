@@ -13,21 +13,21 @@
         android:id="@+id/toolbarLib"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/library_container"
+        android:layout_weight="0.15"
         android:background="@color/colorAccent"
         android:backgroundTint="@color/colorPrimary"
-        android:orientation="horizontal"
-        android:layout_below="@+id/library_container"
-        android:layout_weight="0.5"
-        tools:layout_editor_absoluteX="8dp">
+        android:minHeight="50dp"
+        android:orientation="horizontal">
 
         <Button
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_gravity="right"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_gravity="right"
             android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="5dp" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -35,7 +35,7 @@
         android:id="@+id/library_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3.25"
+        android:layout_weight="3.70"
         android:weightSum="0"
         android:layout_above="@+id/toolbarLib"
         android:layout_below="@+id/Buttons"
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/library_container"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_weight="0.25"
+        android:layout_weight="0.15"
         android:gravity="center_vertical|center_horizontal"
         android:orientation="horizontal">
 
