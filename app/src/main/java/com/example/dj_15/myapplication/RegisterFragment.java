@@ -1,7 +1,12 @@
 package com.example.dj_15.myapplication;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +34,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.SQLException;
 
 /**
  * Created by Carlotta on 23/03/2017.
@@ -46,14 +52,24 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     private Button register;
     private TextView redirect;
     private String idGender;
+    private  MyDatabase userDB;
+
+
+    private SharedPreferences saved;
+
+
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-    }
+
+        saved = this.getActivity().getSharedPreferences("SavedValues", Context.MODE_PRIVATE);
+            }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.register_fragment, container, false);
+
 
         name = (EditText) view.findViewById(R.id.nome);
         gender = (RadioGroup) view.findViewById(R.id.radio_group);
@@ -71,11 +87,13 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
         register.setOnClickListener(this);
         gender.setOnCheckedChangeListener(this);
 
+
         return view;
     }
 
     @Override
     public void onClick(View view) {
+
         switch (view.getId()) {
             case (R.id.redirect):
                 getFragmentManager().beginTransaction().replace(R.id.frag_container, new LoginFragment()).commit();
@@ -89,9 +107,25 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 params[3] = password.getText().toString();
                 params[4] = confPass.getText().toString();
 
-                new RegisterThread().execute(params[0],params[1],params[2],params[3],params[4]);
 
-                break;
+                /*una volta convertiti in string i miei dati chiamo il SQL
+                e carico i dati, se e' andata a buon fine la query allora faccio la query sul server ESTERNOO*/
+                userDB = new MyDatabase(getActivity());
+                //apriamo il db
+                userDB.open();
+                  if(userDB.insertUser(params[0],params[2],params[1]) == true){
+                      Toast.makeText(getActivity(),"inserito db",Toast.LENGTH_SHORT).show();
+                  }
+                  else{
+                      Toast.makeText(getActivity(),"error insert db",Toast.LENGTH_SHORT).show();
+
+                  }
+                    new RegisterThread().execute(params[0],params[1],params[2],params[3],params[4]);
+                    break;
+
+
+
+
         }
     }
 
@@ -148,6 +182,12 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter write = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
+
+                //mydb.insertUser(params[2],params[3],params[0]); //Scrivo nel dbLocale
+
+
+
+
                 write.write(query);
                 write.flush();
                 os.close();
@@ -186,6 +226,10 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
         protected void onPostExecute(String result) {
             if (result.equalsIgnoreCase("ok")) {
+                SharedPreferences.Editor editor = saved.edit();
+                editor.putString("user", myUsername);
+                editor.commit();
+
                 Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
                 intentApriAS.putExtra("myUsername",myUsername);
                 startActivity(intentApriAS);

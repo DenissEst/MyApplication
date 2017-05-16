@@ -10,13 +10,13 @@ import static com.example.dj_15.myapplication.R.mipmap.ic_launcher;
 
 public class MainActivity extends AppCompatActivity{
 
+
     private SharedPreferences savedValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
 
         String user = savedValues.getString("user", "");
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity{
                     android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
                     trans.add(R.id.frag_container, new RegisterFragment());
                     trans.commit();
+
                 }
             }
         }
