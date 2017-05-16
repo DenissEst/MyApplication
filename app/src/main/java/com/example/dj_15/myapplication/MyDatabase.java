@@ -18,15 +18,13 @@ public class MyDatabase {
     DBHelper dbHelper;
     Context context;
 
-    private static final String DB_NAME = "database.db";
+
     private static final String TABLE_NAME = "ProfiLo";
-    private static final int version = 1;
 
 
 
     public MyDatabase(Context ctx){
-        context = ctx;
-        dbHelper = new DBHelper(ctx,DB_NAME,null, version);
+        dbHelper = new DBHelper(ctx);
     }
 
     public void open(){
@@ -70,16 +68,13 @@ public class MyDatabase {
             Log.e("PROCESSO","get user is null");
             return null;
 
-        }else if(cursor != null){
+        }else{
+
             cursor.moveToFirst();
             Log.e("PROCESSO", "get user is true");
             return cursor;
         }
-
-        return null;
     }
-
-
 
 }
 

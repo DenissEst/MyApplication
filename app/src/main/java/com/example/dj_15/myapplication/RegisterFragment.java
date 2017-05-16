@@ -23,6 +23,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -53,7 +56,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     private TextView redirect;
     private String idGender;
     private  MyDatabase userDB;
-
+    private String[] params = new String[5];
 
     private SharedPreferences saved;
 
@@ -99,7 +102,6 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 getFragmentManager().beginTransaction().replace(R.id.frag_container, new LoginFragment()).commit();
                 break;
             case (R.id.register):
-                String[] params = new String[5];
 
                 params[0] = name.getText().toString();
                 params[1] = idGender;
@@ -110,16 +112,11 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
                 /*una volta convertiti in string i miei dati chiamo il SQL
                 e carico i dati, se e' andata a buon fine la query allora faccio la query sul server ESTERNOO*/
-                userDB = new MyDatabase(getActivity());
-                //apriamo il db
-                userDB.open();
-                  if(userDB.insertUser(params[0],params[2],params[1]) == true){
-                      Toast.makeText(getActivity(),"inserito db",Toast.LENGTH_SHORT).show();
-                  }
-                  else{
-                      Toast.makeText(getActivity(),"error insert db",Toast.LENGTH_SHORT).show();
 
-                  }
+                userDB = new MyDatabase(getActivity());
+
+                //apriamo il db
+
                     new RegisterThread().execute(params[0],params[1],params[2],params[3],params[4]);
                     break;
 
@@ -225,23 +222,38 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
         }
 
         protected void onPostExecute(String result) {
+            JSONObject formErrors ;
+            int count=0;
             if (result.equalsIgnoreCase("ok")) {
+                userDB.open();
+                if (userDB.insertUser(params[0], params[2], params[1]) == true) {
+                    Toast.makeText(getActivity(), "inserito db", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "error insert db", Toast.LENGTH_SHORT).show();
+
+                }
+
                 SharedPreferences.Editor editor = saved.edit();
                 editor.putString("user", myUsername);
                 editor.commit();
 
                 Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
-                intentApriAS.putExtra("myUsername",myUsername);
+
+                intentApriAS.putExtra("myUsername", myUsername);
                 startActivity(intentApriAS);
                 getActivity().finish();
-            } else if (result.equalsIgnoreCase("error1")) {
+            }else if (result.equalsIgnoreCase("error1")) {
                 Toast.makeText(getActivity(), "Error in registro new user", Toast.LENGTH_LONG).show();
 
-            }else if (result.equalsIgnoreCase("error2")) {
-                    Toast.makeText(getActivity(), "Error registerNewUser ", Toast.LENGTH_LONG).show();
-            }else if(result.equalsIgnoreCase("username utilizzato")){
+            } else if (result.equalsIgnoreCase("error2")) {
+                Toast.makeText(getActivity(), "Error registerNewUser ", Toast.LENGTH_LONG).show();
+
+            } else if (result.equalsIgnoreCase("username utilizzato")) {
                 Toast.makeText(getActivity(), "sei gia un utente registrato", Toast.LENGTH_LONG).show();
 
+            } else if (result.equalsIgnoreCase("error")) {
+                Toast.makeText(getActivity(), "Error compilazione ", Toast.LENGTH_LONG).show();
+
             } else if (result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")) {
 
                 Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
@@ -250,6 +262,33 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
                 Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
 
+            }else {
+                try {
+                    formErrors = new JSONObject(result);
+
+                    if(formErrors.length() > 2 ) {
+                        Toast.makeText(getActivity(),"Compila tutti campi",Toast.LENGTH_SHORT).show();
+
+                    } else if( formErrors.get("id_pass")!= null) {
+                        String erropass = formErrors.getString("id_pass");
+                        Toast.makeText(getActivity(), erropass, Toast.LENGTH_SHORT).show();
+
+                    }else if(formErrors.get("id_confpass") !=null) {
+                        String erroconfpass = formErrors.getString("id_confpass");
+                        Toast.makeText(getActivity(), erroconfpass, Toast.LENGTH_SHORT).show();
+
+                    }else if(formErrors.get("id_user") != null) {
+                        String errouser = formErrors.getString("id_user");
+                        Toast.makeText(getActivity(), errouser, Toast.LENGTH_SHORT).show();
+
+                    }else if (formErrors.get("id_nome") != null) {
+                        String errornome = formErrors.getString("id_nome");
+                        Toast.makeText(getActivity(), errornome, Toast.LENGTH_SHORT).show();
+                    }
+
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
             }
         }
     }

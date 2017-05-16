@@ -10,10 +10,11 @@ import android.util.Log;
 
 class DBHelper extends SQLiteOpenHelper{
     private static final String TABLE_NAME = "ProfiLo";
+    private static final String DB_NAME = "database.db";
 
 
-    public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public DBHelper(Context context){
+        super(context, DB_NAME, null, 1);
     }
 
     @Override
@@ -28,4 +29,6 @@ class DBHelper extends SQLiteOpenHelper{
 
             db.execSQL(" UPDATE SET name = ' "+ newVersion + " ' WHERE name = '" + oldVersion + "'");
     }
+
+
 }
