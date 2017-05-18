@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,16 +39,19 @@ import java.net.URL;
 
 public class LoginFragment extends Fragment implements TextView.OnEditorActionListener, View.OnClickListener {
 
-    public static final int CONNECTION_TIMEOUT=10000;
-    public static final int READ_TIMEOUT=15000;
+    public static final int CONNECTION_TIMEOUT = 10000;
+    public static final int READ_TIMEOUT = 15000;
     private ImageView imageView;
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
     private TextView redirect;
+    private String[] check = new String[2];
     private SharedPreferences savedData;
+    private MyDatabase userDB;
+    private Cursor cursor;
 
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -70,10 +74,11 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
         super.onPause();
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.login_fragment, container, false);
 
         imageView = (ImageView) view.findViewById(R.id.imageView);
+
         usernameEditText = (EditText) view.findViewById(R.id.username);
         passwordEditText = (EditText) view.findViewById(R.id.password);
         loginButton = (Button) view.findViewById(R.id.login);
@@ -89,56 +94,47 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
-            case(R.id.login_redirect):
+        switch (v.getId()) {
+            case (R.id.login_redirect):
                 getFragmentManager().beginTransaction().replace(R.id.frag_container, new RegisterFragment(), "register").commit();
                 break;
-            case(R.id.login):
-                String[] check = new String[2];
+            case (R.id.login):
                 check[0] = usernameEditText.getText().toString();
                 check[1] = passwordEditText.getText().toString();
+
+                userDB = new MyDatabase(getActivity());
                 new LoginThread().execute(check[0], check[1]);
-                 /*       if(check[0] == null){
-                            Toast.makeText(getContext(), "Non hai inserito il tuo username!", Toast.LENGTH_SHORT).show();
-                        }
-                        Intent openprint = new Intent(getActivity(), PrintActivity.class);
-                        openprint.putExtra("username", "check[0]");
-                        openprint.putExtra("password", "check[1]");
-
-                        startActivity(openprint);
-
-                */
                 break;
         }
     }
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_UNSPECIFIED){
+        if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_UNSPECIFIED) {
             return true;
         }
         return false;
     }
 
-    class LoginThread extends AsyncTask<String, String, String>{
+    class LoginThread extends AsyncTask<String, String, String> {
         HttpURLConnection connection;
-        URL url=null;
+        URL url = null;
         String myUsername;
 
         @Override
-        protected String doInBackground(String...params) {
+        protected String doInBackground(String... params) {
 
             myUsername = params[0];
 
-            try{
+            try {
                 url = new URL("http://charlytime92.altervista.org/control_login.php");
-            }catch(MalformedURLException e){
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
                 return "exception";
             }
 
-            try{
-                connection =(HttpURLConnection)url.openConnection();
+            try {
+                connection = (HttpURLConnection) url.openConnection();
                 connection.setReadTimeout(READ_TIMEOUT);
                 connection.setConnectTimeout(CONNECTION_TIMEOUT);
                 connection.setRequestMethod("POST");
@@ -150,69 +146,115 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
                 Uri.Builder builder = new Uri.Builder().appendQueryParameter("username", params[0]).appendQueryParameter("password", params[1]);
                 String query = builder.build().getEncodedQuery();
                 //apre la connessione
-                OutputStream os=connection.getOutputStream();
-                BufferedWriter write =new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter write = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
                 write.write(query);
                 write.flush();
                 os.close();
                 connection.connect();
-            } catch(IOException e1) {
+            } catch (IOException e1) {
                 e1.printStackTrace();
                 return "exception";
             }
 
 
-            try{
-                int response= connection.getResponseCode();
-                if(response==HttpURLConnection.HTTP_OK){
+            try {
+                int response = connection.getResponseCode();
+                if (response == HttpURLConnection.HTTP_OK) {
                     //leggo i dati e li mando sul server
-                    InputStream input =connection.getInputStream();
-                    BufferedReader reader =new BufferedReader(new InputStreamReader(input));
+                    InputStream input = connection.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-                    StringBuilder result =new StringBuilder();
+                    StringBuilder result = new StringBuilder();
                     String line;
 
 
-                    while( (line=reader.readLine()) !=null){
+                    while ((line = reader.readLine()) != null) {
                         result.append(line);
                     }
 
                     return (result.toString());
-                }else{
+                } else {
                     return ("unsuccessful");
                 }
             } catch (IOException e2) {
                 e2.printStackTrace();
                 return "exception";
-            }finally {
+            } finally {
                 connection.disconnect();
             }
         }
 
-        protected void onPostExecute(String result){
-            if(result.equalsIgnoreCase("ok")){
-                SharedPreferences.Editor editor = savedData.edit();
-                editor.putString("user", myUsername);
-                editor.commit();
+        protected void onPostExecute(String result) {
 
-                Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
-                intentApriAS.putExtra("myUsername", myUsername);
-                startActivity(intentApriAS);
-                getActivity().finish();
-            }else if(result.equalsIgnoreCase("error")){
-                Toast.makeText(getActivity(), "Invalid email or password", Toast.LENGTH_LONG).show();
-
-            }else if (result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")) {
-
+            if(result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")){
                 Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
 
-            }else if (result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")) {
-
+            }else if (result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")){
                 Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
 
+            }else if (result.equalsIgnoreCase("error")){
+                Toast.makeText(getActivity()," Invalid email or password", Toast.LENGTH_LONG).show();
+
+            }else if (result.equalsIgnoreCase("test_no")) {
+                Toast.makeText(getActivity(), "error in db Profilo", Toast.LENGTH_LONG).show();
+            }
+
+            try {
+                    JSONObject formLogin = new JSONObject(result);
+
+                 if(!formLogin.isNull("id_user")){
+                    String erroUser = formLogin.getString("id_user");
+                    Toast.makeText(getActivity(), erroUser, Toast.LENGTH_SHORT).show();
+
+                }else if(!formLogin.isNull("id_pass")){
+                    String erropass = formLogin.getString("id_pass");
+                    Toast.makeText(getActivity(), erropass, Toast.LENGTH_SHORT).show();
+
+                }else  if (!formLogin.isNull("ok")){
+                        //controllo se nel mio SQLite c'e il user, se e' cosi allora procedo con l'accesso al profilo dell'app
+                        cursor = userDB.getUser(check[0]);
+                        if (cursor != null) {
+                            SharedPreferences.Editor editor = savedData.edit();
+                            editor.putString("user", myUsername);
+                            editor.commit();
+
+                            Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
+                            intentApriAS.putExtra("myUsername", myUsername);
+                            startActivity(intentApriAS);
+                            getActivity().finish();
+
+                        } else {
+
+                            userDB.open();
+                            //ho inserito i dati nel mio SQlite cosi da potere avere le info del mio profilo,lo faccio xk ci possono essere delle cancellazioni della cache/dati
+                            if (userDB.insertUser(formLogin.getString("name"),formLogin.getString("username"), formLogin.getString("sesso")) == true){
+                                SharedPreferences.Editor editor = savedData.edit();
+                                editor.putString("user", myUsername);
+                                editor.commit();
+
+                                Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
+                                intentApriAS.putExtra("myUsername", myUsername);
+                                startActivity(intentApriAS);
+                               // Toast.makeText(getActivity(), "inserito db", Toast.LENGTH_SHORT).show();
+                                getActivity().finish();
+
+
+                            } else {
+                               // Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT).show();
+
+                            }
+
+                        }
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
-    }
 }
+
 

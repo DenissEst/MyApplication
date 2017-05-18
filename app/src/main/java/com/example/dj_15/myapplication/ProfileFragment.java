@@ -48,19 +48,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
 
-        userDB = new MyDatabase(getActivity());
-        cursor = userDB.getUser(savedData.getString("user",""));
-        if(cursor != null){
-         users = cursor.getString(cursor.getColumnIndex("username"));
-         nombre = cursor.getString(cursor.getColumnIndex("name"));
-         sex = cursor.getString(cursor.getColumnIndex("sesso"));
-        }
-
         username = (TextView) view.findViewById(R.id.usernameprofile);
         logout = (Button) view.findViewById(R.id.logout);
         name = (TextView) view.findViewById(R.id.nameprofile);
-        name.setText(nombre);
-       username.setText(users);
+
+        userDB = new MyDatabase(getActivity());
+        cursor = userDB.getUser(savedData.getString("user",""));
+        if(cursor != null){
+            users = cursor.getString(cursor.getColumnIndex("username"));
+            nombre = cursor.getString(cursor.getColumnIndex("name"));
+            sex = cursor.getString(cursor.getColumnIndex("sesso"));
+            name.setText(nombre);
+            username.setText(users);
+        }
+
+
 
         logout.setOnClickListener(this);
         expandableListView = (ExpandableListView) view.findViewById(R.id.exlistviewProfile);

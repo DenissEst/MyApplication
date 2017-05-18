@@ -128,7 +128,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-        if (i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_ACTION_UNSPECIFIED) {
+        if (i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_ACTION_UNSPECIFIED ) {
             return true;
         }
         return false;
@@ -223,25 +223,27 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
         protected void onPostExecute(String result) {
             JSONObject formErrors ;
-            int count=0;
             if (result.equalsIgnoreCase("ok")) {
                 userDB.open();
                 if (userDB.insertUser(params[0], params[2], params[1]) == true) {
+
                     Toast.makeText(getActivity(), "inserito db", Toast.LENGTH_SHORT).show();
+                    SharedPreferences.Editor editor = saved.edit();
+                    editor.putString("user", myUsername);
+                    editor.commit();
+
+                    Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
+
+                    intentApriAS.putExtra("myUsername", myUsername);
+                    startActivity(intentApriAS);
+                    getActivity().finish();
+
                 } else {
                     Toast.makeText(getActivity(), "error insert db", Toast.LENGTH_SHORT).show();
 
                 }
 
-                SharedPreferences.Editor editor = saved.edit();
-                editor.putString("user", myUsername);
-                editor.commit();
 
-                Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
-
-                intentApriAS.putExtra("myUsername", myUsername);
-                startActivity(intentApriAS);
-                getActivity().finish();
             }else if (result.equalsIgnoreCase("error1")) {
                 Toast.makeText(getActivity(), "Error in registro new user", Toast.LENGTH_LONG).show();
 
@@ -269,19 +271,19 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                     if(formErrors.length() > 2 ) {
                         Toast.makeText(getActivity(),"Compila tutti campi",Toast.LENGTH_SHORT).show();
 
-                    } else if( formErrors.get("id_pass")!= null) {
+                    } else if(!formErrors.isNull("id_pass")) {
                         String erropass = formErrors.getString("id_pass");
                         Toast.makeText(getActivity(), erropass, Toast.LENGTH_SHORT).show();
 
-                    }else if(formErrors.get("id_confpass") !=null) {
+                    }else if(!formErrors.isNull("id_confpass")) {
                         String erroconfpass = formErrors.getString("id_confpass");
                         Toast.makeText(getActivity(), erroconfpass, Toast.LENGTH_SHORT).show();
 
-                    }else if(formErrors.get("id_user") != null) {
+                    }else if(!formErrors.isNull("id_user")) {
                         String errouser = formErrors.getString("id_user");
                         Toast.makeText(getActivity(), errouser, Toast.LENGTH_SHORT).show();
 
-                    }else if (formErrors.get("id_nome") != null) {
+                    }else if (!formErrors.isNull("id_nome")) {
                         String errornome = formErrors.getString("id_nome");
                         Toast.makeText(getActivity(), errornome, Toast.LENGTH_SHORT).show();
                     }

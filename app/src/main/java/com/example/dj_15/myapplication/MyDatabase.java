@@ -47,7 +47,6 @@ public class MyDatabase {
         try {
              database.insert(TABLE_NAME, null, v);
             Log.e("PROCESSO", "insert user");
-            database.close();
             return true;
         }catch (SQLiteException sqle){
 
