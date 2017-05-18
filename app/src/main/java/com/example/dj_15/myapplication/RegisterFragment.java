@@ -144,7 +144,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 //append parameters to url
 
                 Uri.Builder builder = new Uri.Builder().appendQueryParameter("name", params[0])
-                        .appendQueryParameter("gender", params[1])
+                        .appendQueryParameter("sesso", params[1])
                         .appendQueryParameter("username", params[2])
                         .appendQueryParameter("password", params[3])
                         .appendQueryParameter("confPass", params[4]);

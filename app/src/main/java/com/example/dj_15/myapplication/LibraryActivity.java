@@ -1,5 +1,7 @@
 package com.example.dj_15.myapplication;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,6 +33,14 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(toolbar);
         toolbar.setTitle("Books");
         toolbar.setLogo(ic_launcher);
+
+        if(savedInstanceState == null){
+            ProfileFragment profilo = (ProfileFragment) getFragmentManager().findFragmentById(R.id.library_container);
+            if(profilo == null){
+                FragmentTransaction trans = getFragmentManager().beginTransaction();
+                trans.add(R.id.library_container, new ProfileFragment()).commit();
+            }
+        }
 
         search = (Button) findViewById(R.id.search);
         profile = (ImageView) findViewById(R.id.profile);

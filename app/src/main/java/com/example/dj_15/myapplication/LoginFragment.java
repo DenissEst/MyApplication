@@ -56,18 +56,8 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
 
     @Override
     public void onResume() {
-        usernameEditText.setText(savedData.getString("loginUser", ""));
-
+        usernameEditText.setText(savedData.getString("user", ""));
         super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        SharedPreferences.Editor edit = savedData.edit();
-        edit.putString("loginUser", usernameEditText.getText().toString());
-        edit.commit();
-
-        super.onPause();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){

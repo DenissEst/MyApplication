@@ -6,6 +6,15 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/accent_material_dark</item>
+        <item name="android:actionButtonStyle">@style/myStyle</item>
+        <item name="android:actionOverflowButtonStyle">@style/overflow</item>
     </style>
 
+    <style name="myStyle" parent="Widget.AppCompat.ActionButton">
+        <item name="android:layout_marginTop">9dp</item>
+    </style>
+
+    <style name="overflow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:paddingTop">13dp</item>
+    </style>
 </resources>
