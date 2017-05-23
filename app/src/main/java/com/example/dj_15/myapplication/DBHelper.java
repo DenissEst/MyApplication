@@ -19,7 +19,7 @@ class DBHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String q = "CREATE TABLE IF NOT EXISTS  " + TABLE_NAME + "( username TEXT UNIQUE  ," + "name  TEXT," + " sesso TEXT );";
+        String q = "CREATE TABLE IF NOT EXISTS  " + TABLE_NAME + "( username TEXT UNIQUE  ," + "name  TEXT," + " sesso TEXT , " + "info TEXT);";
         db.execSQL(q);
         Log.e("processo","creo tabella");
     }
@@ -27,7 +27,7 @@ class DBHelper extends SQLiteOpenHelper{
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-            db.execSQL(" UPDATE SET name = ' "+ newVersion + " ' WHERE name = '" + oldVersion + "'");
+            db.execSQL(" UPDATE SET name = ' " + newVersion + " ' WHERE name = '" + oldVersion + "'");
     }
 
 

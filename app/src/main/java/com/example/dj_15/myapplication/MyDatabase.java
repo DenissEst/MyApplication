@@ -56,6 +56,32 @@ public class MyDatabase {
         }
     }
 
+    public boolean upDate(String name, String user, String sesso ,String info){
+        ContentValues v = new ContentValues();
+        v.put("username",user);
+        v.put("name",name);
+        v.put("sesso",sesso);
+        v.put("info",info);
+        try {
+
+            /*
+            "id" + "='"
+                + currentActiveId + "'"
+             */
+            String where = " username " + "='" + user + "'";
+            database.update(TABLE_NAME , v ,where ,null);
+          return true;
+    }catch (SQLiteException sqle){
+        Log.e("PROCESSO", " NOOO update user");
+        sqle.printStackTrace();
+        return false;
+    }
+
+
+
+
+    }
+
 
 
     public Cursor getUser(String user){

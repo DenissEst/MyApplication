@@ -98,6 +98,7 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
             case (R.id.login_redirect):
                 getFragmentManager().beginTransaction().replace(R.id.frag_container, new RegisterFragment(), "register").commit();
                 break;
+
             case (R.id.login):
                 check[0] = usernameEditText.getText().toString();
                 check[1] = passwordEditText.getText().toString();
@@ -120,11 +121,13 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
         HttpURLConnection connection;
         URL url = null;
         String myUsername;
+        String mypass;
 
         @Override
         protected String doInBackground(String... params) {
 
             myUsername = params[0];
+            mypass = params[1];
 
             try {
                 url = new URL("http://charlytime92.altervista.org/control_login.php");
@@ -216,12 +219,16 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
                         //controllo se nel mio SQLite c'e il user, se e' cosi allora procedo con l'accesso al profilo dell'app
                         cursor = userDB.getUser(check[0]);
                         if (cursor != null) {
+
                             SharedPreferences.Editor editor = savedData.edit();
                             editor.putString("user", myUsername);
+                            editor.putString("pass",mypass);
                             editor.commit();
+                            Toast.makeText(getActivity(),"Thanks",Toast.LENGTH_LONG).show();
+
 
                             Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
-                            intentApriAS.putExtra("myUsername", myUsername);
+                            //intentApriAS.putExtra("myUsername", myUsername);
                             startActivity(intentApriAS);
                             getActivity().finish();
 

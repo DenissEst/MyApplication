@@ -4,13 +4,9 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +32,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.sql.SQLException;
 
 /**
  * Created by Carlotta on 23/03/2017.
@@ -57,7 +51,6 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     private String idGender;
     private  MyDatabase userDB;
     private String[] params = new String[5];
-
     private SharedPreferences saved;
 
 
@@ -75,7 +68,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
 
 
         name = (EditText) view.findViewById(R.id.nome);
-        gender = (RadioGroup) view.findViewById(R.id.radio_group);
+        gender = (RadioGroup) view.findViewById(R.id.radio_group_change);
         username = (EditText) view.findViewById(R.id.username2);
         password = (EditText) view.findViewById(R.id.password2);
         confPass = (EditText) view.findViewById(R.id.conf_pass);
@@ -109,20 +102,12 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 params[3] = password.getText().toString();
                 params[4] = confPass.getText().toString();
 
-
                 /*una volta convertiti in string i miei dati chiamo il SQL
                 e carico i dati, se e' andata a buon fine la query allora faccio la query sul server ESTERNOO*/
 
                 userDB = new MyDatabase(getActivity());
-
-                //apriamo il db
-
-                    new RegisterThread().execute(params[0],params[1],params[2],params[3],params[4]);
-                    break;
-
-
-
-
+                new RegisterThread().execute(params[0],params[1],params[2],params[3],params[4]);
+                break;
         }
     }
 
@@ -230,6 +215,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                     Toast.makeText(getActivity(), "inserito db", Toast.LENGTH_SHORT).show();
                     SharedPreferences.Editor editor = saved.edit();
                     editor.putString("user", myUsername);
+                    editor.putString("pass",params[3]);
                     editor.commit();
 
                     Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);

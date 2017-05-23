@@ -1,5 +1,6 @@
 package com.example.dj_15.myapplication;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Button;
@@ -31,25 +33,30 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     HashMap<String, List<String>> expandableListDetail;
     private TextView username;
     private TextView name;
+
     private Button logout;
+    private Button modifica;
     private SharedPreferences savedData;
     private  MyDatabase userDB;
     private Cursor cursor;
     private String users,nombre,sex;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         savedData = this.getActivity().getSharedPreferences("SavedValues", Context.MODE_PRIVATE);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.profile_fragment, container, false);
+        final View view = inflater.inflate(R.layout.profile_fragment, container, false);
 
         username = (TextView) view.findViewById(R.id.usernameprofile);
         logout = (Button) view.findViewById(R.id.logout);
+        modifica = (Button) view.findViewById(R.id.change_button);
         name = (TextView) view.findViewById(R.id.nameprofile);
 
         userDB = new MyDatabase(getActivity());
@@ -63,8 +70,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         }
 
 
-
         logout.setOnClickListener(this);
+        modifica.setOnClickListener(this);
         expandableListView = (ExpandableListView) view.findViewById(R.id.exlistviewProfile);
         expandableListDetail = ExpandableListProfile.getData();
         expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
@@ -102,6 +109,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 startActivity(intentApriAS);
                 this.getActivity().finish();
                 break;
+
+            case R.id.change_button:
+                android.app.FragmentTransaction change = getFragmentManager().beginTransaction();
+                change.replace(R.id.library_container,new ChangeProfile()).commit();
+                break;
+
         }
+
+
     }
+
+
+
+
+
+
+
 }
