@@ -1,5 +1,6 @@
 package com.example.dj_15.myapplication;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -69,10 +70,11 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.profile:
                 android.app.FragmentTransaction profile = getFragmentManager().beginTransaction();
-                profile.replace(R.id.library_container, new ProfileFragment()).commit();
+                profile.add(R.id.library_container, new ProfileFragment()).commit();
                 break;
             case R.id.books:
                 break;
         }
     }
+
 }

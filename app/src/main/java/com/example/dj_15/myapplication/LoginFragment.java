@@ -192,7 +192,7 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
         protected void onPostExecute(String result) {
 
             if(result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")){
-                Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "OOPs!Connection Problem.", Toast.LENGTH_LONG).show();
 
             }else if (result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")){
                 Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();

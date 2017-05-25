@@ -68,6 +68,7 @@ public class ChangeProfile extends Fragment implements EditText.OnEditorActionLi
         final View view = inflater.inflate(R.layout.change_profile, container, false);
 
         name = (EditText) view.findViewById(R.id.change_name);
+        image = (ImageView)view.findViewById(R.id.change_imag);
         info = (EditText) view.findViewById(R.id.change_info);
         gender = (RadioGroup) view.findViewById(R.id.radio_group_change);
         username = (TextView) view.findViewById(R.id.username_pgchange);
@@ -78,11 +79,14 @@ public class ChangeProfile extends Fragment implements EditText.OnEditorActionLi
         if(cursor != null){
             username.setText(savedData.getString("user", ""));
             String nombre = cursor.getString(cursor.getColumnIndex("name"));
+            String infors = cursor.getString(cursor.getColumnIndex("info"));
             name.setText(nombre);
+            info.setText(infors);
         }
 
 
         name.setOnEditorActionListener(this);
+        info.setOnClickListener(this);
         gender.setOnCheckedChangeListener(this);
         change.setOnClickListener(this);
 
