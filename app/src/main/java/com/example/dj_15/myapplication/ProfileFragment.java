@@ -90,6 +90,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             case R.id.logout:
                 SharedPreferences.Editor editor = savedData.edit();
                 editor.remove("user");
+                editor.remove("SESSIONID");
                 editor.commit();
 
                 Intent intentApriAS = new Intent(this.getActivity(), MainActivity.class);

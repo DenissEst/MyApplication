@@ -26,10 +26,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -157,6 +160,18 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
                 write.flush();
                 os.close();
                 connection.connect();
+                Map<String, List<String>> headerFields = connection.getHeaderFields();
+                List<String> cookiesHeader = headerFields.get("Set-Cookie");
+                if(cookiesHeader != null){
+                    String cookie = cookiesHeader.get(0);
+                    HttpCookie httpCookie = HttpCookie.parse(cookie).get(0);
+                    String name = httpCookie.getName();
+                    String value = httpCookie.getValue();
+                    String domain = httpCookie.getDomain();
+                    SharedPreferences.Editor editor = savedData.edit();
+                    editor.putString("SESSIONID", value);
+                    editor.commit();
+                }
             } catch(IOException e1) {
                 e1.printStackTrace();
                 return "exception";
@@ -191,16 +206,7 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
         }
 
         protected void onPostExecute(String result){
-            if(result.equalsIgnoreCase("ok")){
-                SharedPreferences.Editor editor = savedData.edit();
-                editor.putString("user", myUsername);
-                editor.commit();
-
-                Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
-                intentApriAS.putExtra("myUsername", myUsername);
-                startActivity(intentApriAS);
-                getActivity().finish();
-            }else if(result.equalsIgnoreCase("error")){
+            if(result.equalsIgnoreCase("error")){
                 Toast.makeText(getActivity(), "Invalid email or password", Toast.LENGTH_LONG).show();
 
             }else if (result.equalsIgnoreCase("exception") || result.equalsIgnoreCase("unsuccessful")) {
@@ -211,6 +217,15 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
 
                 Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
 
+            }else{
+
+                SharedPreferences.Editor editor = savedData.edit();
+                editor.putString("user", myUsername);
+                editor.commit();
+                Intent intentApriAS = new Intent(getActivity(), LibraryActivity.class);
+                intentApriAS.putExtra("myUsername", myUsername);
+                startActivity(intentApriAS);
+                getActivity().finish();
             }
         }
     }

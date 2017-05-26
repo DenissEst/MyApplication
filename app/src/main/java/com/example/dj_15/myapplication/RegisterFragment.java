@@ -1,7 +1,9 @@
 package com.example.dj_15.myapplication;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,10 +27,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Carlotta on 23/03/2017.
@@ -46,10 +51,12 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
     private Button register;
     private TextView redirect;
     private String idGender;
+    private SharedPreferences savedData;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        savedData = this.getActivity().getSharedPreferences("SavedValues", Context.MODE_PRIVATE);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -138,7 +145,7 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 //append parameters to url
 
                 Uri.Builder builder = new Uri.Builder().appendQueryParameter("name", params[0])
-                        .appendQueryParameter("gender", params[1])
+                        .appendQueryParameter("sesso", params[1])
                         .appendQueryParameter("username", params[2])
                         .appendQueryParameter("password", params[3])
                         .appendQueryParameter("confPass", params[4]);
@@ -152,6 +159,18 @@ public class RegisterFragment extends Fragment implements TextView.OnEditorActio
                 write.flush();
                 os.close();
                 connection.connect();
+                Map<String, List<String>> headerFields = connection.getHeaderFields();
+                List<String> cookiesHeader = headerFields.get("Set-Cookie");
+                if(cookiesHeader != null){
+                    String cookie = cookiesHeader.get(0);
+                    HttpCookie httpCookie = HttpCookie.parse(cookie).get(0);
+                    String name = httpCookie.getName();
+                    String value = httpCookie.getValue();
+                    String domain = httpCookie.getDomain();
+                    SharedPreferences.Editor editor = savedData.edit();
+                    editor.putString("SESSIONID", value);
+                    editor.commit();
+                }
             } catch (IOException e1) {
                 e1.printStackTrace();
                 return "exception";

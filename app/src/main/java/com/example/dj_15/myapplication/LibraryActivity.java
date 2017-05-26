@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+
 import static com.example.dj_15.myapplication.R.mipmap.ic_launcher;
 
 /**
@@ -26,6 +29,8 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
+        CookieManager cookieManager = new CookieManager();
+        CookieHandler.setDefault(cookieManager);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarLib);
         setSupportActionBar(toolbar);
