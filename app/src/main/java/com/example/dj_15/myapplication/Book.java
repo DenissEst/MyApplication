@@ -14,6 +14,7 @@ public class Book {
     public String plot;
     public String isbn;
     public int numPages;
+    public boolean you;
 
     public Book(JSONObject item){
         try {
@@ -39,5 +40,9 @@ public class Book {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setPrefer(boolean you){
+        this.you = you;
     }
 }

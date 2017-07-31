@@ -52,7 +52,12 @@ import static com.example.dj_15.myapplication.R.mipmap.ic_launcher;
 
 public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
 
-    private ArrayList<Book> books;
+    /*  NO BUONO: Ricrea l'activity sopra quella attuale e non mostra i risultati.
+     *  TODO controlla perchè fa così.
+     */
+
+
+    private ArrayList<String> myBooks; //TODO riempire al login?
     private AQuery aQuery;
 
     @Override
@@ -67,16 +72,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         toolbar.setTitle("Books");
 
         aQuery = new AQuery(this);
-        books = new ArrayList<>();
-
-        Intent intent = getIntent();
-        if(Intent.ACTION_SEARCH.equals(intent.getAction())){
-            android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
-            trans.add(R.id.search_container, new SearchFragment());
-            trans.commit();
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            doMySearch(query);
-        }
     }
 
     @Override
@@ -98,6 +93,15 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        Intent intent = new Intent(Intent.ACTION_SEARCH);
+        intent.putExtra("query", query);
+        setIntent(intent);
+        SearchFragment search = (SearchFragment) getFragmentManager().findFragmentById(R.id.search_container);
+        if(search == null) {
+            android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
+            trans.add(R.id.search_container, new SearchFragment());
+            trans.commit();
+        }
         return false;
     }
 
@@ -106,42 +110,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         return false;
     }
 
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
-    public void doMySearch(String query){
-        if(isOnline()){
-            //TODO ricerca online
-            String[] temp = query.split(" ");
-            String search = "";
-            for(int i = 0; i < temp.length; i++){
-                if(search.equals(""))
-                    search = temp[i];
-                else
-                    search += "+" + temp[i];
-            }
-            String url = "https://www.googleapis.com/books/v1/volumes?q=" + search;
-            aQuery.ajax(url, JSONObject.class, this, "print");
-        }else{
-            //TODO ricerca offline
-        }
-    }
 
 
-    public void print(String url, JSONObject json, AjaxStatus status){
-        if(json != null){
-            try {
-                JSONArray array = json.getJSONArray("items");
-                for(int i = 0; i < array.length(); i++)
-                    books.add(new Book(array.getJSONObject(i).getJSONObject("volumeInfo")));
-                SearchFragment s = (SearchFragment) getFragmentManager().findFragmentById(R.id.search_container);
-                s.showResult(books);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+
 }
