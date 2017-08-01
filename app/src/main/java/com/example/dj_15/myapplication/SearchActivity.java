@@ -72,6 +72,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         toolbar.setTitle("Books");
 
         aQuery = new AQuery(this);
+
+        android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
+        trans.add(R.id.search_container, new SearchFragment());
+        trans.commit();
     }
 
     @Override
@@ -96,12 +100,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         Intent intent = new Intent(Intent.ACTION_SEARCH);
         intent.putExtra("query", query);
         setIntent(intent);
-        SearchFragment search = (SearchFragment) getFragmentManager().findFragmentById(R.id.search_container);
-        if(search == null) {
-            android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
-            trans.add(R.id.search_container, new SearchFragment());
-            trans.commit();
-        }
+
+        android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
+        trans.replace(R.id.search_container, new SearchFragment());
+        trans.commit();
+
         return false;
     }
 

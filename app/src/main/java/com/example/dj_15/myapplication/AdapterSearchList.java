@@ -1,6 +1,9 @@
 package com.example.dj_15.myapplication;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +18,7 @@ import java.util.List;
  * Created by Carlotta on 02/06/2017.
  */
 
-public class AdapterSearchList extends ArrayAdapter<Book> {
+public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClickListener {
 
     private class ViewHolder{
         public ImageView cover;
@@ -36,7 +39,7 @@ public class AdapterSearchList extends ArrayAdapter<Book> {
         ViewHolder holder = null;
         if(convertView == null){
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.listview_line, null);
+            convertView = inflater.inflate(R.layout.result_line, null);
             holder = new ViewHolder();
             holder.cover = (ImageView) convertView.findViewById(R.id.cover);
             holder.title = (TextView) convertView.findViewById(R.id.bookTitle);
@@ -52,10 +55,16 @@ public class AdapterSearchList extends ArrayAdapter<Book> {
         holder.title.setText(book.title);
         holder.author.setText(book.author);
         if(book.you == false){
-            //holder.you.setBackground(La mia drawable per l'aggiunta);
+            holder.you.setBackgroundResource(R.drawable.add_read);
+            holder.you.setOnClickListener(this);
         }else{
-
+            holder.you.setBackgroundResource(R.drawable.remove_read);
         }
         return convertView;
+    }
+
+    @Override
+    public void onClick(View view) {
+        //Gestire i click sul bottone e sulla linea
     }
 }

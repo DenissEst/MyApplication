@@ -65,8 +65,7 @@
             android:id="@+id/books"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            />
+            android:layout_marginLeft="15dp" />
 
     </LinearLayout>
 

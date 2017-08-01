@@ -57,6 +57,7 @@ public class SearchFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         Intent intent = getActivity().getIntent();
         if(Intent.ACTION_SEARCH.equals(intent.getAction())){
             String query = intent.getStringExtra("query");
@@ -75,7 +76,7 @@ public class SearchFragment extends Fragment {
                 else
                     search += "+" + temp[i];
             }
-            String url = "https://www.googleapis.com/books/v1/volumes?q=" + search;
+            String url = "https://www.googleapis.com/books/v1/volumes?q=" + search + "&maxResults=40";
             aQuery.ajax(url, JSONObject.class, this, "print");
         }else{
             //TODO ricerca offline
@@ -95,7 +96,7 @@ public class SearchFragment extends Fragment {
                 JSONArray array = json.getJSONArray("items");
                 for(int i = 0; i < array.length(); i++)
                     books.add(new Book(array.getJSONObject(i).getJSONObject("volumeInfo")));
-                adapter = new AdapterSearchList(getActivity(), R.layout.listview_line, books);
+                adapter = new AdapterSearchList(getActivity(), R.layout.result_line, books);
                 listView.setAdapter(adapter);
             } catch (JSONException e) {
                 e.printStackTrace();
