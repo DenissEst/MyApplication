@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -48,6 +49,13 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.default_menu, menu);
+
+        return true;
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
 
@@ -75,9 +83,8 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.search:
-                Intent intentApriAS = new Intent(this, SearchActivity.class);
-                startActivity(intentApriAS);
-                this.finish();
+                android.app.FragmentTransaction search = getFragmentManager().beginTransaction();
+                search.replace(R.id.library_container, new SearchFragment()).commit();
                 break;
             case R.id.profile:
                 android.app.FragmentTransaction profile = getFragmentManager().beginTransaction();
@@ -85,6 +92,14 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.books:
                 break;
+        }
+    }
+
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0 ){
+            getFragmentManager().popBackStack("BOOK", getFragmentManager().POP_BACK_STACK_INCLUSIVE);
+        } else {
+            super.onBackPressed();
         }
     }
 }

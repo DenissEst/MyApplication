@@ -1,5 +1,6 @@
 package com.example.dj_15.myapplication;
 
+import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -8,12 +9,20 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
@@ -22,19 +31,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by Carlotta on 18/05/2017.
  */
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements SearchView.OnQueryTextListener, Observer{
 
     private ArrayList<Book> books;
     private ListView listView;
     private AdapterSearchList adapter;
     private AQuery aQuery;
+    private JSONArray array;
+    private Position position;
+    protected Bundle savedState;
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
@@ -42,6 +57,29 @@ public class SearchFragment extends Fragment {
 
         aQuery = new AQuery(this.getActivity());
         books = new ArrayList<>();
+        array = new JSONArray();
+
+        position = new Position();
+        position.addObserver(this);
+
+        setHasOptionsMenu(true);
+
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.search_toolbar, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        SearchManager manager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+
+        searchView.setSearchableInfo(manager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+        searchView.setOnQueryTextListener(this);
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Nullable
@@ -52,17 +90,6 @@ public class SearchFragment extends Fragment {
         listView = (ListView) view.findViewById(R.id.results);
 
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        Intent intent = getActivity().getIntent();
-        if(Intent.ACTION_SEARCH.equals(intent.getAction())){
-            String query = intent.getStringExtra("query");
-            doMySearch(query);
-        }
     }
 
     public void doMySearch(String query){
@@ -93,14 +120,76 @@ public class SearchFragment extends Fragment {
     public void print(String url, JSONObject json, AjaxStatus status){
         if(json != null){
             try {
-                JSONArray array = json.getJSONArray("items");
+                array = json.getJSONArray("items");
                 for(int i = 0; i < array.length(); i++)
                     books.add(new Book(array.getJSONObject(i).getJSONObject("volumeInfo")));
-                adapter = new AdapterSearchList(getActivity(), R.layout.result_line, books);
+                adapter = new AdapterSearchList(getActivity(), R.layout.result_line, books, position);
                 listView.setAdapter(adapter);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        reset();
+        doMySearch(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        int position = (Integer) o;
+
+        Bundle arg = new Bundle();
+        Book selected = books.get(position);
+
+        arg.putParcelable("book", selected);
+
+        getFragmentManager().saveFragmentInstanceState(this);
+
+        BookFragment bookFragment = new BookFragment();
+        bookFragment.setArguments(arg);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.library_container, bookFragment).addToBackStack("BOOK");
+        transaction.commit();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("list", (Serializable) books);
+        savedState = outState;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if(savedState != null) {
+            books = (ArrayList<Book>) savedState.getSerializable("list");
+            restoreData();
+        }
+    }
+
+    public void restoreData(){
+        adapter = new AdapterSearchList(getActivity(), R.layout.result_line, books, position);
+        listView.setAdapter(adapter);
+    }
+
+    public void reset(){
+        if(!books.isEmpty())
+            books.removeAll(books);
     }
 }

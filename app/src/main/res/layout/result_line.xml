@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:padding="6dp"
-    android:weightSum="3">
+    android:weightSum="3"
+    android:clickable="true"
+    android:id="@+id/result_line">
 
     <ImageView
         android:id="@+id/cover"
@@ -29,8 +31,7 @@
             android:layout_alignParentTop="true"
             android:maxLines="1"
             android:ellipsize="end"
-            android:textSize="16dp"
-            android:clickable="true"/>
+            android:textSize="16dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -39,8 +40,7 @@
             android:layout_alignParentBottom="true"
             android:textSize="12dp"
             android:hint="autore"
-            android:maxLines="1"
-            />
+            android:maxLines="1" />
 
     </RelativeLayout>
 

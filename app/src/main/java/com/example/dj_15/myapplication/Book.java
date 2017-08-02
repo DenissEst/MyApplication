@@ -1,5 +1,8 @@
 package com.example.dj_15.myapplication;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,7 +10,7 @@ import org.json.JSONObject;
  * Created by Carlotta on 16/05/2017.
  */
 
-public class Book {
+public class Book implements Parcelable{
     public String urlCover;
     public String title;
     public String author;
@@ -44,5 +47,15 @@ public class Book {
 
     public void setPrefer(boolean you){
         this.you = you;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

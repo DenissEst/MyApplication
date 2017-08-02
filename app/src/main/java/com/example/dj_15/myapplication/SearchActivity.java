@@ -1,5 +1,6 @@
 package com.example.dj_15.myapplication;
 
+import android.app.FragmentTransaction;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -52,11 +53,6 @@ import static com.example.dj_15.myapplication.R.mipmap.ic_launcher;
 
 public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
 
-    /*  NO BUONO: Ricrea l'activity sopra quella attuale e non mostra i risultati.
-     *  TODO controlla perchè fa così.
-     */
-
-
     private ArrayList<String> myBooks; //TODO riempire al login?
     private AQuery aQuery;
 
@@ -73,9 +69,13 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
         aQuery = new AQuery(this);
 
-        android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
-        trans.add(R.id.search_container, new SearchFragment());
-        trans.commit();
+        if(savedInstanceState == null){
+            SearchFragment profilo = (SearchFragment) getFragmentManager().findFragmentById(R.id.search_container);
+            if(profilo == null){
+                FragmentTransaction trans = getFragmentManager().beginTransaction();
+                trans.add(R.id.search_container, new SearchFragment()).commit();
+            }
+        }
     }
 
     @Override
@@ -101,7 +101,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         intent.putExtra("query", query);
         setIntent(intent);
 
-        android.app.FragmentTransaction trans = getFragmentManager().beginTransaction();
+        FragmentTransaction trans = getFragmentManager().beginTransaction();
         trans.replace(R.id.search_container, new SearchFragment());
         trans.commit();
 
@@ -112,8 +112,5 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     public boolean onQueryTextChange(String newText) {
         return false;
     }
-
-
-
 
 }
