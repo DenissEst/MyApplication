@@ -1,14 +1,7 @@
 package com.example.dj_15.myapplication;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+
 import android.content.Context;
-import android.content.Intent;
-import android.database.Observable;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PictureDrawable;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
@@ -37,9 +29,9 @@ public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClic
         public RelativeLayout text;
     }
 
-    private Position var;
-
     private AQuery aQuery;
+
+    private Position var;
 
     public AdapterSearchList(Context context, int resource, List<Book> books, Position var){
         super(context, resource, books);
@@ -48,6 +40,7 @@ public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClic
     }
 
     public View getView(int position, View convertView, ViewGroup parent){
+
         return getViewOptimize(position, convertView, parent);
     }
 
@@ -62,6 +55,7 @@ public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClic
             holder.author = (TextView) convertView.findViewById(R.id.author);
             holder.you = (Button) convertView.findViewById(R.id.add_remove);
             holder.text = (RelativeLayout) convertView.findViewById(R.id.title_container);
+
             convertView.setTag(holder);
         }else
             holder = (ViewHolder) convertView.getTag();
@@ -71,6 +65,8 @@ public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClic
 
         holder.title.setText(book.title);
         holder.author.setText(book.author);
+        //holder.cover.setImageBitmap(book.cover);
+
         if(book.you == false){
             holder.you.setBackgroundResource(R.drawable.add_read);
         }else{
@@ -78,22 +74,34 @@ public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClic
         }
 
         holder.you.setOnClickListener(this);
+        holder.you.setTag(position);
 
         holder.text.setOnClickListener(this);
         holder.text.setTag(position);
+
+        aQuery.id(holder.cover).image(book.urlCover);
 
         return convertView;
     }
 
     @Override
     public void onClick(View view) {
+        int position = (int) view.getTag();;
         switch(view.getId()){
             case R.id.title_container:
-                int position = (int) view.getTag();
-                var.setPosition(position);
+                var.setPosition(position, false, false);
                 break;
             case R.id.add_remove:
-
+                Book temp = getItem(position);
+                if(temp.you == false) {
+                    temp.setPrefer(true);
+                    view.setBackgroundResource(R.drawable.remove_read);
+                    var.setPosition(position, true, false);
+                }else{
+                    temp.setPrefer(false);
+                    view.setBackgroundResource(R.drawable.add_read);
+                    var.setPosition(position, false, true);
+                }
                 break;
         }
     }

@@ -1,16 +1,24 @@
 package com.example.dj_15.myapplication;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * Created by Carlotta on 16/05/2017.
  */
 
-public class Book implements Parcelable{
+public class Book implements Serializable {
+
     public String urlCover;
     public String title;
     public String author;
@@ -18,28 +26,56 @@ public class Book implements Parcelable{
     public String isbn;
     public int numPages;
     public boolean you;
+    public Bitmap cover;
+
+    public Book(String url, String title, String author, String plot, String isbn, int numPages, boolean you){
+        this.urlCover = url;
+        this.title = title;
+        this.author = author;
+        this.plot = plot;
+        this.isbn = isbn;
+        this.numPages = numPages;
+        this.you = you;
+    }
 
     public Book(JSONObject item){
         try {
-            urlCover = item.getJSONObject("imageLinks").getString("smallThumbnail");
-            title = item.getString("title");
-            author = "";
-            for(int i = 0; i < item.getJSONArray("authors").length(); i++){
-                if(author.equals(""))
-                    author = item.getJSONArray("authors").getString(i);
-                else
-                    author += ", " + item.getJSONArray("authors").getString(i);
-            }
+            if(!item.isNull("imageLinks"))
+                urlCover = item.getJSONObject("imageLinks").getString("smallThumbnail");
+            else
+                urlCover = "";
+            if(!item.isNull("title"))
+                title = item.getString("title");
+            else
+                title = "";
+            if(!item.isNull("authors")) {
+                author = "";
+                for (int i = 0; i < item.getJSONArray("authors").length(); i++) {
+                    if (author.equals(""))
+                        author = item.getJSONArray("authors").getString(i);
+                    else
+                        author += ", " + item.getJSONArray("authors").getString(i);
+                }
+            }else
+                author = "";
             if(!item.isNull("description"))
                 plot = item.getString("description");
-            isbn = "";
-            for(int i = 0; i < item.getJSONArray("industryIdentifiers").length(); i++){
-                if(isbn.equals(""))
-                    isbn = item.getJSONArray("industryIdentifiers").getJSONObject(i).getString("identifier");
-                else
-                    isbn += ", " + item.getJSONArray("industryIdentifiers").getJSONObject(i).getString("identifier");
-            }
-            numPages = item.getInt("pageCount");
+            else
+                plot = "";
+            if(!item.isNull("isbn")) {
+                isbn = "";
+                for (int i = 0; i < item.getJSONArray("industryIdentifiers").length(); i++) {
+                    if (isbn.equals(""))
+                        isbn = item.getJSONArray("industryIdentifiers").getJSONObject(i).getString("identifier");
+                    else
+                        isbn += ", " + item.getJSONArray("industryIdentifiers").getJSONObject(i).getString("identifier");
+                }
+            }else
+                isbn = "";
+            if(!item.isNull("pageCount"))
+                numPages = item.getInt("pageCount");
+            else
+                numPages = 0;
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -47,15 +83,5 @@ public class Book implements Parcelable{
 
     public void setPrefer(boolean you){
         this.you = you;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
     }
 }

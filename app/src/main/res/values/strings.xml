@@ -11,4 +11,8 @@
     <string name="pref_label">Favorite books</string>
     <string name="search_label">Title, author or ISBN</string>
     <string name="settings_label">Settings</string>
+    <string name="title_label">Title</string>
+    <string name="author_label">Author</string>
+    <string name="description_label">Description</string>
+    <string name="number_label">Page count</string>
 </resources>

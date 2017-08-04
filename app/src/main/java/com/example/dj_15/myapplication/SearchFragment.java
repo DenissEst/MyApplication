@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -50,6 +51,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     private JSONArray array;
     private Position position;
     protected Bundle savedState;
+    private HashMap<Book, String> toSave;
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
         aQuery = new AQuery(this.getActivity());
         books = new ArrayList<>();
         array = new JSONArray();
+        toSave = new HashMap<>();
 
         position = new Position();
         position.addObserver(this);
@@ -146,31 +149,44 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     @Override
     public void update(Observable observable, Object o) {
         int position = (Integer) o;
-
-        Bundle arg = new Bundle();
         Book selected = books.get(position);
+        Position temp = (Position) observable;
+        if(temp.remove != false){
+            toSave.put(selected, "REMOVE");
+        }else if(temp.add != false){
+            toSave.put(selected, "ADD");
+        }else {
+            Bundle arg = new Bundle();
 
-        arg.putParcelable("book", selected);
+            arg.putString("title", selected.title);
+            arg.putString("author", selected.author);
+            arg.putString("cover", selected.urlCover);
+            arg.putString("plot", selected.plot);
+            arg.putString("isbn", selected.isbn);
+            arg.putInt("numPages", selected.numPages);
+            arg.putBoolean("you", selected.you);
 
-        getFragmentManager().saveFragmentInstanceState(this);
+            getFragmentManager().saveFragmentInstanceState(this);
 
-        BookFragment bookFragment = new BookFragment();
-        bookFragment.setArguments(arg);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.library_container, bookFragment).addToBackStack("BOOK");
-        transaction.commit();
+            BookFragment bookFragment = new BookFragment();
+            bookFragment.setArguments(arg);
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.library_container, bookFragment).addToBackStack("BOOK");
+            transaction.commit();
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", (Serializable) books);
+        outState.putSerializable("list", books);
         savedState = outState;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        position.restore();
     }
 
     @Override
@@ -191,5 +207,6 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     public void reset(){
         if(!books.isEmpty())
             books.removeAll(books);
+        position.restore();
     }
 }
