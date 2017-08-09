@@ -40,7 +40,6 @@
             android:layout_marginTop="22dp"
             android:layout_toEndOf="@+id/profilephoto"
             android:layout_toRightOf="@+id/profilephoto"
-            android:gravity="center"
             android:hint="Username"
             android:textSize="30sp" />
 

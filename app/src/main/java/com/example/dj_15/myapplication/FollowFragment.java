@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -72,10 +73,10 @@ public class FollowFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-        }
 
     }
+
+
 
     class FollowThread extends AsyncTask<String, String, String> {
 
@@ -178,13 +179,29 @@ public class FollowFragment extends Fragment implements View.OnClickListener {
                             String profilePhoto = data.getJSONObject(i).get("foto").toString();
                             String name = data.getJSONObject(i).get("name").toString();
                             String you = "null";
-                            if(data.getJSONObject(i).get("following").toString().equals('0')){
+                            if(data.getJSONObject(i).get("following").toString().equals("0")){
                                 you = "StartFollowing";
+                            }
+                            else if(data.getJSONObject(i).get("following").toString().equals("1")){
+                                you = "StopFollowing";
                             }
                             list.add(i, new FollowUser(profilePhoto, userId, name, you));
                         }
                         CustomAdapterOptimize adapterOptimize = new CustomAdapterOptimize(context, R.layout.follow_layout, list);
                         listViewFollowers.setAdapter(adapterOptimize);
+                    }
+                    if(sharedPreferences.getString("follow", null).equals("ing")){
+                        ListView listViewFollowing = (ListView) view.findViewById(R.id.followgroup_container);
+                        List<FollowUser> list = new LinkedList();
+                        for(int i =0; i<data.length(); i++){
+                            String userId = data.getJSONObject(i).get("username").toString();
+                            String profilePhoto = data.getJSONObject(i).get("foto").toString();
+                            String name = data.getJSONObject(i).get("name").toString();
+                            String you = "StopFollowing";
+                            list.add(i, new FollowUser(profilePhoto, userId, name, you));
+                        }
+                        CustomAdapterOptimize adapterOptimize = new CustomAdapterOptimize(context, R.layout.follow_layout, list);
+                        listViewFollowing.setAdapter(adapterOptimize);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -192,4 +209,6 @@ public class FollowFragment extends Fragment implements View.OnClickListener {
             }
         }
     }
+
+
 }

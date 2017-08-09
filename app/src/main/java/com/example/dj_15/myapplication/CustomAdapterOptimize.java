@@ -1,6 +1,8 @@
 package com.example.dj_15.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -17,13 +19,16 @@ import java.util.List;
  * Created by Monica on 25/05/2017.
  */
 
-public class CustomAdapterOptimize extends ArrayAdapter<FollowUser> {
+public class CustomAdapterOptimize extends ArrayAdapter<FollowUser> implements View.OnClickListener{
+
+    private SharedPreferences sharedPreferences;
 
     public CustomAdapterOptimize(Context context, int resource, List<FollowUser> users) {
         super(context, resource, users);
     }
 
     public View getView(int position, View convertView, ViewGroup parent){
+        sharedPreferences = this.getContext().getSharedPreferences("SavedValues", Context.MODE_PRIVATE);
         return getViewOptimize(position, convertView, parent);
     }
 
@@ -40,7 +45,7 @@ public class CustomAdapterOptimize extends ArrayAdapter<FollowUser> {
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        FollowUser user = getItem(position);
+        final FollowUser user = getItem(position);
         if(user.getProfilephoto()=="NULL"){
             //
         }else{
@@ -51,13 +56,22 @@ public class CustomAdapterOptimize extends ArrayAdapter<FollowUser> {
             viewHolder.you.setText("Inizia a seguire");
         }else if(user.getYou().equals("StopFollowing")){
             viewHolder.you.setText("Smetti di seguire");
+
         }
+
+        viewHolder.you.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                new ChangeFollowThread(getContext(), view).execute(sharedPreferences.getString("SESSIONID", null), user.getUserId().toString(), user.getYou().toString());
+            }
+        });
+
         return convertView;
     }
 
+    @Override
+    public void onClick(View v) {
 
-
-
+    }
 
     private class ViewHolder{
         public ImageView profilephoto;
