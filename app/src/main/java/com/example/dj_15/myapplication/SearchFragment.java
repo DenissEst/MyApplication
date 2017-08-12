@@ -52,6 +52,8 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     private Position position;
     protected Bundle savedState;
     private HashMap<Book, String> toSave;
+    private Orientation orientation;
+    private String rotation;
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
@@ -65,8 +67,14 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
         position = new Position();
         position.addObserver(this);
 
+        orientation = new Orientation(getActivity());
+        rotation = orientation.getCurrentOrientation().name();
+
         setHasOptionsMenu(true);
 
+        if(savedInstanceState != null && savedInstanceState.getBoolean("rotate")) {
+            savedState = savedInstanceState;
+        }
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -148,23 +156,23 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
     @Override
     public void update(Observable observable, Object o) {
-        int position = (Integer) o;
-        Book selected = books.get(position);
+        int pos = (Integer) o;
+        Book selected = books.get(pos);
         Position temp = (Position) observable;
         if(temp.remove != false){
-            toSave.put(selected, "REMOVE");
+            if(!toSave.containsKey(selected))
+                toSave.put(selected, "REMOVE");
+            else if(toSave.containsKey(selected) && toSave.get(selected).equals("ADD"))
+                toSave.remove(selected);
+            position.restore();
         }else if(temp.add != false){
-            toSave.put(selected, "ADD");
+            if(!toSave.containsKey(selected) || toSave.get(selected).equals("REMOVE"))
+                toSave.put(selected, "ADD");
+            position.restore();
         }else {
             Bundle arg = new Bundle();
 
-            arg.putString("title", selected.title);
-            arg.putString("author", selected.author);
-            arg.putString("cover", selected.urlCover);
-            arg.putString("plot", selected.plot);
-            arg.putString("isbn", selected.isbn);
-            arg.putInt("numPages", selected.numPages);
-            arg.putBoolean("you", selected.you);
+            arg.putSerializable("selected", selected);
 
             getFragmentManager().saveFragmentInstanceState(this);
 
@@ -180,6 +188,8 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("list", books);
+        if(!rotation.equals(orientation.getCurrentOrientation().name()))
+            outState.putBoolean("rotate", true);
         savedState = outState;
     }
 

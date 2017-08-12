@@ -62,16 +62,15 @@ public class Book implements Serializable {
                 plot = item.getString("description");
             else
                 plot = "";
-            if(!item.isNull("isbn")) {
-                isbn = "";
+            isbn = "";
+            if(!item.isNull("industryIdentifiers")) {
                 for (int i = 0; i < item.getJSONArray("industryIdentifiers").length(); i++) {
                     if (isbn.equals(""))
                         isbn = item.getJSONArray("industryIdentifiers").getJSONObject(i).getString("identifier");
                     else
                         isbn += ", " + item.getJSONArray("industryIdentifiers").getJSONObject(i).getString("identifier");
                 }
-            }else
-                isbn = "";
+            }
             if(!item.isNull("pageCount"))
                 numPages = item.getInt("pageCount");
             else

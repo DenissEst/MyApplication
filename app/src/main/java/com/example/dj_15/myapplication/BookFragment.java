@@ -10,9 +10,14 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +39,7 @@ import java.net.URL;
  * Created by Carlotta on 02/08/2017.
  */
 
-public class BookFragment extends Fragment {
+public class BookFragment extends Fragment implements View.OnClickListener {
 
     private Book selected;
     private Bundle args;
@@ -60,14 +65,24 @@ public class BookFragment extends Fragment {
         author = (TextView) view.findViewById(R.id.author_content);
         isbn = (TextView) view.findViewById(R.id.isbn_content);
         numPage = (TextView) view.findViewById(R.id.number_content);
-        plot = (TextView) view.findViewById(R.id.number_content);
+        plot = (TextView) view.findViewById(R.id.description_content);
 
         args = getArguments();
-        selected = new Book(args.getString("cover"), args.getString("title"), args.getString("author"), args.getString("plot"), args.getString("isbn"), args.getInt("numPages"), args.getBoolean("you"));
+        selected = (Book) args.getSerializable("selected");
 
         new BitmapThread(cover).execute(selected.urlCover);
+
+        title.setText(selected.title);
+        author.setText(selected.author);
+        isbn.setText(selected.isbn);
+        numPage.setText(String.valueOf(selected.numPages));
+        plot.setText(selected.plot);
 
         return view;
     }
 
+    @Override
+    public void onClick(View view) {
+
+    }
 }
