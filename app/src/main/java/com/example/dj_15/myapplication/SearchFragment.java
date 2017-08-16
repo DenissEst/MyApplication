@@ -34,9 +34,12 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 /**
  * Created by Carlotta on 18/05/2017.
@@ -160,14 +163,10 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
         Book selected = books.get(pos);
         Position temp = (Position) observable;
         if(temp.remove != false){
-            if(!toSave.containsKey(selected))
-                toSave.put(selected, "REMOVE");
-            else if(toSave.containsKey(selected) && toSave.get(selected).equals("ADD"))
-                toSave.remove(selected);
+            toSave.put(selected, "REMOVE");
             position.restore();
         }else if(temp.add != false){
-            if(!toSave.containsKey(selected) || toSave.get(selected).equals("REMOVE"))
-                toSave.put(selected, "ADD");
+            toSave.put(selected, "ADD");
             position.restore();
         }else {
             Bundle arg = new Bundle();
@@ -218,5 +217,38 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
         if(!books.isEmpty())
             books.removeAll(books);
         position.restore();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        JSONObject jsonToSend = new JSONObject();
+        try {
+            jsonToSend.put("user", "ciao");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Set<Book> keys = toSave.keySet();
+        Iterator<Book> iterator = keys.iterator();
+        JSONArray array = new JSONArray();
+        Book temp;
+        for(int i = 0; i < toSave.size(); i++) {
+            temp = iterator.next();
+            array.put(temp.buildJSON());
+        }
+        try {
+            jsonToSend.put("books", array);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(jsonToSend.length() != 0)
+            new BookThread().execute(jsonToSend);
+    }
+
+    public void resetToSave(){
+        Iterator<Book> iterator = toSave.keySet().iterator();
+        while(iterator.hasNext())
+            toSave.remove(iterator.next());
     }
 }

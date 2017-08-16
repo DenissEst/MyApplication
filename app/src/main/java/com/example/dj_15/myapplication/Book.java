@@ -83,4 +83,19 @@ public class Book implements Serializable {
     public void setPrefer(boolean you){
         this.you = you;
     }
+
+    public JSONObject buildJSON(){
+        JSONObject json = new JSONObject();
+
+        try {
+            json.put("urlCover", urlCover);
+            json.put("isbn", isbn);
+            json.put("numPages", numPages);
+            json.put("action", you);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return json;
+    }
 }
