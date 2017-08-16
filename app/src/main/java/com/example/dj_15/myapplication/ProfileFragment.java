@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -60,6 +62,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         name = (TextView) view.findViewById(R.id.nameprofile);
 
         userDB = new MyDatabase(getActivity());
+
+        if(isOnline()){
+            //aggiorno database locale
+        }
         cursor = userDB.getUser(savedData.getString("user",""));
         if(cursor != null){
             users = cursor.getString(cursor.getColumnIndex("username"));
@@ -95,6 +101,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
 
         return view;
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     @Override

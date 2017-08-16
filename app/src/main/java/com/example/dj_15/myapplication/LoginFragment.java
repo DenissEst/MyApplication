@@ -198,7 +198,7 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
                 Toast.makeText(getActivity(), "OOPs! Something went wrong. Connection Problem.", Toast.LENGTH_LONG).show();
 
             }else if (result.equalsIgnoreCase("error")){
-                Toast.makeText(getActivity()," Invalid email or password", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),"Usermane email or Password", Toast.LENGTH_LONG).show();
 
             }else if (result.equalsIgnoreCase("test_no")) {
                 Toast.makeText(getActivity(), "error in db Profilo", Toast.LENGTH_LONG).show();
@@ -222,7 +222,6 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
 
                             SharedPreferences.Editor editor = savedData.edit();
                             editor.putString("user", myUsername);
-                            editor.putString("pass",mypass);
                             editor.commit();
                             Toast.makeText(getActivity(),"Thanks",Toast.LENGTH_LONG).show();
 

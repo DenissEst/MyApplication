@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -75,14 +77,14 @@ public class ChangeProfile extends Fragment implements EditText.OnEditorActionLi
         change =(Button)view.findViewById(R.id.save);
 
         userDB = new MyDatabase(getActivity());
-        cursor = userDB.getUser(savedData.getString("user",""));
-        if(cursor != null){
-            username.setText(savedData.getString("user", ""));
-            String nombre = cursor.getString(cursor.getColumnIndex("name"));
-            String infors = cursor.getString(cursor.getColumnIndex("info"));
-            name.setText(nombre);
-            info.setText(infors);
-        }
+            cursor = userDB.getUser(savedData.getString("user",""));
+            if (cursor != null) {
+                username.setText(savedData.getString("user", ""));
+                String nombre = cursor.getString(cursor.getColumnIndex("name"));
+                String infors = cursor.getString(cursor.getColumnIndex("info"));
+                name.setText(nombre);
+                info.setText(infors);
+            }
 
 
         name.setOnEditorActionListener(this);
@@ -128,6 +130,12 @@ public class ChangeProfile extends Fragment implements EditText.OnEditorActionLi
     class ChangeThread extends AsyncTask<String, Void, String> {
         HttpURLConnection connection;
         URL url = null;
+
+        public boolean isOnline() {
+            ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            return netInfo != null && netInfo.isConnectedOrConnecting();
+        }
 
         @Override
         protected String doInBackground(String... params) {
