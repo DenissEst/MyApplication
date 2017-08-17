@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -54,9 +55,12 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     private JSONArray array;
     private Position position;
     protected Bundle savedState;
+    private ArrayList<Book> myBooks;
     private HashMap<Book, String> toSave;
     private Orientation orientation;
     private String rotation;
+    private SharedPreferences savedData;
+    private MyDatabase db;
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
@@ -77,6 +81,19 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
         if(savedInstanceState != null && savedInstanceState.getBoolean("rotate")) {
             savedState = savedInstanceState;
+        }
+
+        savedData = this.getActivity().getSharedPreferences("SavedValues", Context.MODE_PRIVATE);
+
+        String user = savedData.getString("user", "USER_NOT_FOUND");
+
+        myBooks = new ArrayList<>();
+
+        db = new MyDatabase(this.getActivity());
+        if(!user.equals("USER_NOT_FOUND")){
+            myBooks = db.getAllBooks(user);
+            if(isOnline())
+                db.updateDB(user, myBooks);
         }
     }
 
@@ -137,7 +154,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
                 array = json.getJSONArray("items");
                 for(int i = 0; i < array.length(); i++)
                     books.add(new Book(array.getJSONObject(i).getJSONObject("volumeInfo")));
-                adapter = new AdapterSearchList(getActivity(), R.layout.result_line, books, position);
+                adapter = new AdapterSearchList(getActivity(), R.layout.result_line, books, position, isOnline());
                 listView.setAdapter(adapter);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -203,13 +220,14 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
         super.onStart();
 
         if(savedState != null) {
+            resetToSave();
             books = (ArrayList<Book>) savedState.getSerializable("list");
             restoreData();
         }
     }
 
     public void restoreData(){
-        adapter = new AdapterSearchList(getActivity(), R.layout.result_line, books, position);
+        adapter = new AdapterSearchList(getActivity(), R.layout.result_line, books, position, isOnline());
         listView.setAdapter(adapter);
     }
 
@@ -223,27 +241,47 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
     public void onPause() {
         super.onPause();
 
-        JSONObject jsonToSend = new JSONObject();
-        try {
-            jsonToSend.put("user", "ciao");
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(isOnline()) {
+            String user = savedData.getString("user", "NO_USER_FOUND");
+
+            JSONObject jsonToSend = new JSONObject();
+            if (!user.equals("NO_USER_FOUND")) {
+                try {
+                    jsonToSend.put("user", user);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Set<Book> keys = toSave.keySet();
+                Iterator<Book> iterator = keys.iterator();
+                JSONArray array = new JSONArray();
+                Book temp;
+                for (int i = 0; i < toSave.size(); i++) {
+                    temp = iterator.next();
+                    array.put(temp.buildJSON());
+                }
+                try {
+                    jsonToSend.put("books", array);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (array.length() != 0) {
+                    iterator = keys.iterator();
+
+                    db.open();
+                    db.beginTransaction();
+                    while (iterator.hasNext()) {
+                        temp = iterator.next();
+                        if (toSave.get(temp).equals("ADD"))
+                            db.insertNewBook(temp, user);
+                        else if (toSave.get(temp).equals("REMOVE"))
+                            db.removeBook(temp, user);
+                    }
+                    db.commit();
+                    db.endTransaction();
+                    new BookThread("http://charlytime92.altervista.org/new_book.php").execute(jsonToSend);
+                }
+            }
         }
-        Set<Book> keys = toSave.keySet();
-        Iterator<Book> iterator = keys.iterator();
-        JSONArray array = new JSONArray();
-        Book temp;
-        for(int i = 0; i < toSave.size(); i++) {
-            temp = iterator.next();
-            array.put(temp.buildJSON());
-        }
-        try {
-            jsonToSend.put("books", array);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if(jsonToSend.length() != 0)
-            new BookThread().execute(jsonToSend);
     }
 
     public void resetToSave(){

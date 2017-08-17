@@ -1,16 +1,35 @@
 package com.example.dj_15.myapplication;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import static com.example.dj_15.myapplication.R.mipmap.ic_launcher;
 
@@ -23,6 +42,8 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
     private Button search;
     private ImageView profile;
     private Button library;
+    private MyDatabase database;
+    private SharedPreferences savedData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -35,6 +56,8 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
         toolbar.setTitle("Books");
         toolbar.setLogo(ic_launcher);
 
+        database = new MyDatabase(this);
+
         if(savedInstanceState == null){
             ProfileFragment profilo = (ProfileFragment) getFragmentManager().findFragmentById(R.id.library_container);
             if(profilo == null){
@@ -42,6 +65,8 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
                 trans.add(R.id.library_container, new ProfileFragment()).commit();
             }
         }
+
+        savedData = getSharedPreferences("SavedValues", Context.MODE_PRIVATE);
 
         search = (Button) findViewById(R.id.search);
         profile = (ImageView) findViewById(R.id.profile);
@@ -102,5 +127,10 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
             super.onBackPressed();
         }
     }
-}
 
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+}

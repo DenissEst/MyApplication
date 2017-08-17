@@ -163,7 +163,6 @@ public class LoginFragment extends Fragment implements TextView.OnEditorActionLi
                     StringBuilder result =new StringBuilder();
                     String line;
 
-
                     while( (line=reader.readLine()) !=null){
                         result.append(line);
                     }

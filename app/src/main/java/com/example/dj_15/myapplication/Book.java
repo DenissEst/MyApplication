@@ -27,15 +27,13 @@ public class Book implements Serializable {
     public int numPages;
     public boolean you;
     public Bitmap cover;
+    public int reading;
+    public int finished;
 
-    public Book(String url, String title, String author, String plot, String isbn, int numPages, boolean you){
-        this.urlCover = url;
-        this.title = title;
-        this.author = author;
-        this.plot = plot;
+    public Book(String isbn, int reading, int finished){
         this.isbn = isbn;
-        this.numPages = numPages;
-        this.you = you;
+        this.reading = reading;
+        this.finished = finished;
     }
 
     public Book(JSONObject item){
@@ -92,6 +90,8 @@ public class Book implements Serializable {
             json.put("isbn", isbn);
             json.put("numPages", numPages);
             json.put("action", you);
+            json.put("reading", reading);
+            json.put("finished", finished);
         } catch (JSONException e) {
             e.printStackTrace();
         }

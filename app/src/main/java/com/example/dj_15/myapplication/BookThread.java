@@ -29,13 +29,18 @@ public class BookThread extends AsyncTask<JSONObject, Void, Void> {
     private HttpURLConnection connection;
     private URL url=null;
     private JSONObject json;
+    private String address;
+
+    public BookThread(String address){
+        this.address = address;
+    }
 
     @Override
     protected Void doInBackground(JSONObject... jsonObjects) {
         json = jsonObjects[0];
 
         try{
-            url = new URL("http://charlytime92.altervista.org/new_book.php");
+            url = new URL(address);
         }catch (MalformedURLException e){
             e.printStackTrace();
         }

@@ -29,14 +29,17 @@ public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClic
         public RelativeLayout text;
     }
 
+    private boolean connection;
+
     private AQuery aQuery;
 
     private Position var;
 
-    public AdapterSearchList(Context context, int resource, List<Book> books, Position var){
+    public AdapterSearchList(Context context, int resource, List<Book> books, Position var, boolean connection){
         super(context, resource, books);
         this.var = var;
         aQuery = new AQuery(context);
+        this.connection = connection;
     }
 
     public View getView(int position, View convertView, ViewGroup parent){
@@ -67,14 +70,17 @@ public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClic
         holder.author.setText(book.author);
         //holder.cover.setImageBitmap(book.cover);
 
-        if(book.you == false){
-            holder.you.setBackgroundResource(R.drawable.add_read);
-        }else{
-            holder.you.setBackgroundResource(R.drawable.remove_read);
+        if(!connection)
+            holder.you.setEnabled(false);
+        else{
+            if(book.you == false){
+                holder.you.setBackgroundResource(R.drawable.add_read);
+            }else {
+                holder.you.setBackgroundResource(R.drawable.remove_read);
+            }
+            holder.you.setOnClickListener(this);
+            holder.you.setTag(position);
         }
-
-        holder.you.setOnClickListener(this);
-        holder.you.setTag(position);
 
         holder.text.setOnClickListener(this);
         holder.text.setTag(position);
@@ -93,7 +99,7 @@ public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClic
                 break;
             case R.id.add_remove:
                 Book temp = getItem(position);
-                if(temp.you == false) {
+                if(!temp.you) {
                     temp.setPrefer(true);
                     view.setBackgroundResource(R.drawable.remove_read);
                     var.setPosition(position, true, false);
@@ -105,7 +111,5 @@ public class AdapterSearchList extends ArrayAdapter<Book> implements View.OnClic
                 break;
         }
     }
-
-
 
 }
